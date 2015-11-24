@@ -11,17 +11,15 @@
 * Network
   * [Feedforward Network](https://github.com/wbaek/machinelearning/blob/master/core/network.py)
   * ~~Recurrent Network~~
-  * ~~Autoencoder Network~~
+  * [Autoencoder Network](https://github.com/wbaek/machinelearning/blob/master/README.md#auto-encoder)
 * Layer
   * [Fullconnect Layer](https://github.com/wbaek/machinelearning/blob/master/core/layer.py)
   * ~~Dropout Layer~~
   * ~~Convolution Layer~~
-  * ~~SharedWeight Layer~~
 * Nonlinear Function
   * [Linear](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/linear.py)
   * [ReLu](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/relu.py)
   * [Tanh](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/tanh.py)
-  * ~~Binarizer~~
 * Activation \w Negative Log Likelihood Loss
   * [Softmax \w cross-entropy error](https://github.com/wbaek/machinelearning/blob/master/core/activations/softmax.py)
   * [Sigmoid \w cross-entropy error](https://github.com/wbaek/machinelearning/blob/master/core/activations/sigmoid.py)
@@ -32,7 +30,7 @@
   * ~~Momentum~~
   * ~~AdaGradient~~
 * Initializer
-  * Xavier (implement in Network init function)
+  * Xavier (implemented in Layer init function)
   * ~~Kaiming Initializer~~
 * Aggregator
   * ~~Comcat~~
