@@ -1,15 +1,21 @@
 import math
 import numpy as np
+from nonlinears.linear import Linear
+from updaters.gradient_descent import GradientDescent
 
 class Layer:
-    def __init__(self, input_size, output_size, nonlinear_function=lambda x: x, derivative_function=lambda x: np.ones(x.shape)):
+    def __init__(self, input_size, output_size,
+            nonlinear_function=Linear.function, derivative_function=Linear.derivative,
+            updater=GradientDescent() ):
         self.input_size = input_size
         self.output_size = output_size
         # xavier initializer
         self.W = math.sqrt(6./(output_size+input_size)) * np.random.uniform( -1.0, 1.0, (output_size, input_size) )
         self.b = np.zeros( (output_size, 1) )
+        self.params = [self.W, self.b]
         self.nonlinear_function = nonlinear_function
         self.derivative_function = derivative_function
+        self.updater = updater
 
     def forward(self, x):
         self.x = x
@@ -22,6 +28,10 @@ class Layer:
 
     def get_gradient(self):
         return ( np.dot(self.delta_a, self.x.T), np.dot(self.delta_a, np.ones((self.delta_a.shape[1], 1))) )
+
+    def update(self):
+        for param, gradient in zip(self.params, self.get_gradient()):
+            param = self.updater.update(param, gradient)
 
     def __test(self):
         '''

@@ -1,16 +1,10 @@
 import numpy as np
-
-from layer import Layer
-from nonlinears.tanh import Tanh
-from nonlinears.relu import ReLu
 from activations.softmax import Softmax
 
 class Network:
     def __init__(self):
         self.layers = []
         self.activation = Softmax()
-        self.updater = None
-        self.learning_rate = 0.01
 
     def predict(self, x):
         _ = x
@@ -23,19 +17,20 @@ class Network:
         _ = self.activation.backward( y, target )
         for layer in reversed( self.layers ):
             _ = layer.backward( _ )
-
-            # gradient updater
-            dW, db = layer.get_gradient()
-            layer.W -= self.learning_rate * dW
-            layer.b -= self.learning_rate * db
+            layer.update()
         return self.activation.loss( y, target )
 
     def __test(self):
         '''
+        >>> from core.layer import Layer
+        >>> from core.nonlinears import ReLu, Tanh
+        >>> from core.activations.softmax import Softmax
+        >>> from core.updaters.gradient_descent import GradientDescent
         >>> np.random.seed(0xC0FFEE)
         >>> n = Network()
-        >>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative) )
-        >>> n.layers.append( Layer(10, 2) )
+        >>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+        >>> n.layers.append( Layer(10, 2, updater=GradientDescent(learning_rate=0.01)) )
+        >>> n.activation = Softmax()
         >>> for epoch in range(0, 20):
         ...     loss = n.train( x = np.array([ [1, 2, 1, 2,  5, 6, 5, 6],
         ...                                    [5, 4, 4, 5,  1, 2, 2, 1]]),
