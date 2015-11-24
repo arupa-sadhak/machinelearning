@@ -14,6 +14,7 @@
   * ~~Autoencoder Network~~
 * Layer
   * [Fullconnect Layer](https://github.com/wbaek/machinelearning/blob/master/core/layer.py)
+  * ~~Bypass Layer~~
   * ~~Dropout Layer~~
   * ~~Convolution Layer~~
   * ~~SharedWeight Layer~~
@@ -26,10 +27,12 @@
   * [Sigmoid \w cross-entropy error](https://github.com/wbaek/machinelearning/blob/master/core/activations/sigmoid.py)
   * ~~Identity \w sum-of-squre error~~
 * Updater
+  * ~~None~~
   * Vanila [Gradient Descent](https://github.com/wbaek/machinelearning/blob/master/core/updaters/gradient_descent.py)
   * ~~Momentum~~
   * ~~AdaGradient~~
 * Initializer
+  * ~~Identity~~
   * Xavier (implement in Network init function)
   * ~~Kaiming Initializer~~
 * Aggregator
