@@ -54,10 +54,12 @@ pip install -r requirements.txt
 >>> from core.activations import Softmax
 >>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
+>>> 
 >>> n = Network()
 >>> n.layers.append( Layer(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.layers.append( Layer(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.activation = Softmax()
+>>> 
 >>> for epoch in range(0, 20):
 ...     loss = n.train( x = np.array([ [1, 2, 1, 2,  5, 6, 5, 6],
 ...                                    [5, 4, 4, 5,  1, 2, 2, 1]]),
@@ -69,6 +71,7 @@ epoch:0000 loss:9.84
 epoch:0005 loss:0.37
 epoch:0010 loss:0.24
 epoch:0015 loss:0.18
+>>> 
 >>> y = n.predict( np.array( [[1, 6, 3], [5, 1, 4]] ) )
 >>> [_ for _ in np.argmax(y, 0)]
 [0, 1, 0]
@@ -83,10 +86,12 @@ epoch:0015 loss:0.18
 >>> from core.activations import Sigmoid
 >>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
+>>> 
 >>> n = Network()
 >>> n.layers.append( Layer(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.layers.append( Layer(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.activation = Sigmoid()
+>>> 
 >>> for epoch in range(0, 20):
 ...     loss = n.train( x = np.array([ [1, 2, 1, 2,  5, 6, 5, 6,  5, 6, 5, 6],
 ...                                    [5, 4, 4, 5,  5, 4, 5, 4,  1, 2, 2, 1]]),
@@ -98,6 +103,7 @@ epoch:0000 loss:17.45
 epoch:0005 loss:9.05
 epoch:0010 loss:5.83
 epoch:0015 loss:3.97
+>>> 
 >>> y = n.predict( np.array( [[1, 6, 3, 5], [5, 1, 4, 5]] ) )
 >>> [['%.2f'%_ for _ in v] for v in y]
 [['0.96', '0.06', '0.95', '0.95'], ['0.13', '0.99', '0.56', '0.86']]
@@ -111,10 +117,12 @@ epoch:0015 loss:3.97
 >>> from core.activations import Identity
 >>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
+>>> 
 >>> n = Network()
 >>> n.layers.append( Layer(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.layers.append( Layer(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.activation = Identity()
+>>> 
 >>> for epoch in range(0, 20):
 ...     loss = n.train( x = np.array([ [1, 2, 1, 2,  5, 6, 5, 6,  5, 6, 5, 6],
 ...                                    [5, 4, 4, 5,  5, 4, 5, 4,  1, 2, 2, 1]]),
@@ -126,7 +134,47 @@ epoch:0000 loss:18.67
 epoch:0005 loss:3.17
 epoch:0010 loss:2.46
 epoch:0015 loss:2.00
+>>> 
 >>> y = n.predict( np.array( [[1, 6, 3, 5], [5, 1, 4, 5]] ) )
 >>> [['%.2f'%_ for _ in v] for v in y]
 [['1.36', '0.43', '0.72', '0.54'], ['0.15', '0.69', '0.52', '0.63']]
+```
+
+### Auto-encoder
+```python
+>>> from core.network import Network
+>>> from core.layer import Layer
+>>> from core.nonlinears import ReLu
+>>> from core.activations import Identity
+>>> from core.updaters import GradientDescent
+>>> np.random.seed(0xC0FFEE)
+>>> 
+>>> n = Network()
+>>> n.layers.append( Layer( 2, 10, updater=GradientDescent(learning_rate=0.001)) )
+>>> n.layers.append( Layer(10, 10, Tanh.function, Tanh.derivative, GradientDescent(learning_rate=0.001)) )
+>>> n.layers.append( Layer(10, 10, updater=GradientDescent(learning_rate=0.001)) )
+>>> n.layers.append( Layer(10,  2, updater=GradientDescent(learning_rate=0.001)) )
+>>> n.activation = Identity()
+>>> 
+>>> # for auto-encoder (weight share)
+>>> n.layers[2].W = n.layers[1].W.T
+>>> n.layers[3].W = n.layers[0].W.T
+>>> x = np.array( [[1, 2, 1, 2,  5, 6, 5, 6,  5, 6, 5, 6],
+>>>                [5, 4, 4, 5,  5, 4, 5, 4,  1, 2, 2, 1]] )
+>>> 
+>>> for epoch in range(0, 51):
+>>>     loss = n.train( x=x, target=x )
+>>>     if epoch%5 == 0:
+>>>         print 'epoch:%04d loss:%.2f'%(epoch, loss)
+epoch:0000 loss:61.98
+epoch:0005 loss:37.56
+epoch:0010 loss:25.72
+epoch:0015 loss:19.55
+epoch:0020 loss:15.47
+epoch:0025 loss:12.76
+epoch:0030 loss:10.97
+epoch:0035 loss:9.71
+epoch:0040 loss:8.80
+epoch:0045 loss:8.12
+epoch:0050 loss:7.62
 ```
