@@ -5,14 +5,13 @@ class Softmax:
         pass
 
     def forward(self, x):
-        y = np.exp(x) / sum( np.exp(x), 0 )
-        return y
+        return np.exp(x) / sum( np.exp(x), 0 )
 
     def backward(self, y, target):
         return y - target
 
     def loss(self, y, target):
-        return np.average(np.sum( - np.log(y) * target, 1 ))
+        return - np.sum( np.log(y) * target )
 
     def __test(self):
         '''
@@ -27,7 +26,7 @@ class Softmax:
         [['-0.50', '0.25', '-0.25'], ['0.50', '-0.25', '0.25']]
         >>> l = f.loss(y, t)
         >>> print '%.2f'%l
-        0.63
+        1.27
         '''
         pass
 

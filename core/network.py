@@ -22,10 +22,10 @@ class Network:
 
     def __test(self):
         '''
-        >>> from core.layer import Layer
-        >>> from core.nonlinears import ReLu, Tanh
-        >>> from core.activations.softmax import Softmax
-        >>> from core.updaters.gradient_descent import GradientDescent
+        >>> from layer import Layer
+        >>> from nonlinears import ReLu, Tanh
+        >>> from activations.softmax import Softmax
+        >>> from updaters.gradient_descent import GradientDescent
         >>> np.random.seed(0xC0FFEE)
         >>> n = Network()
         >>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
@@ -38,10 +38,10 @@ class Network:
         ...                                    [0, 0, 0, 0,  1, 1, 1, 1]]) )
         ...     if epoch%5 == 0:
         ...         print 'epoch:%04d loss:%.2f'%(epoch, loss)
-        epoch:0000 loss:4.92
-        epoch:0005 loss:0.19
-        epoch:0010 loss:0.12
-        epoch:0015 loss:0.09
+        epoch:0000 loss:9.84
+        epoch:0005 loss:0.37
+        epoch:0010 loss:0.24
+        epoch:0015 loss:0.18
         >>> y = n.predict( np.array( [[1, 6, 3], [5, 1, 4]] ) )
         >>> [_ for _ in np.argmax(y, 0)]
         [0, 1, 0]
