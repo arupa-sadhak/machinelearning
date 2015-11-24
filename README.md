@@ -25,6 +25,9 @@
 * Initializer
   * Xavier Initializer
   * ~~Kaiming Initializer~~
+* Aggregator
+  * ~~Comcat~~
+  * ~~Reshape~~
 
 ## Requirements
 ```
