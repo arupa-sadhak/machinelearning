@@ -17,7 +17,7 @@
 * Nonlinear Function
   * [ReLu](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/relu.py)
   * [tanh](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/tanh.py)
-* Activation \w Loss
+* Activation \w Negative Log Likelihood Loss
   * [Softmax \w cross-entropy error](https://github.com/wbaek/machinelearning/blob/master/core/activations/softmax.py)
   * ~~Sigmoid \w cross-entropy error~~
   * ~~Identity \w sum-of-squre error~~
