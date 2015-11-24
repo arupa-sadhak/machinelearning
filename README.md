@@ -74,7 +74,7 @@ epoch:0015 loss:0.18
 
 
 ### Multiple-class Classification
-```
+```python
 >>> from core.network import Network
 >>> from core.layer import Layer
 >>> from core.nonlinears import ReLu
