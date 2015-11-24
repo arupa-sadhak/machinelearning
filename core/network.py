@@ -22,14 +22,14 @@ class Network:
 
     def __test(self):
         '''
-        >>> from layer import Layer
+        >>> from layers import Fullconnect
         >>> from nonlinears import ReLu, Tanh
         >>> from activations import Softmax, Sigmoid, Identity
         >>> from updaters import GradientDescent
         >>> np.random.seed(0xC0FFEE)
         >>> n = Network()
-        >>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
-        >>> n.layers.append( Layer(10, 2, updater=GradientDescent(learning_rate=0.01)) )
+        >>> n.layers.append( Fullconnect(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+        >>> n.layers.append( Fullconnect(10, 2, updater=GradientDescent(learning_rate=0.01)) )
         >>> n.activation = Softmax()
         >>> for epoch in range(0, 20):
         ...     loss = n.train( x = np.array([ [1, 2, 1, 2,  5, 6, 5, 6],
@@ -46,8 +46,8 @@ class Network:
         >>> [_ for _ in np.argmax(y, 0)]
         [0, 1, 0]
         >>> n = Network()
-        >>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
-        >>> n.layers.append( Layer(10, 2, updater=GradientDescent(learning_rate=0.01)) )
+        >>> n.layers.append( Fullconnect(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+        >>> n.layers.append( Fullconnect(10, 2, updater=GradientDescent(learning_rate=0.01)) )
         >>> n.activation = Sigmoid()
         >>> for epoch in range(0, 20):
         ...     loss = n.train( x = np.array([ [1, 2, 1, 2,  5, 6, 5, 6,  5, 6, 5, 6],
@@ -67,8 +67,8 @@ class Network:
         >>> [_ for _ in np.argmax(y, 0)]
         [0, 1, 0]
         >>> n = Network()
-        >>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
-        >>> n.layers.append( Layer(10, 2, updater=GradientDescent(learning_rate=0.01)) )
+        >>> n.layers.append( Fullconnect(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+        >>> n.layers.append( Fullconnect(10, 2, updater=GradientDescent(learning_rate=0.01)) )
         >>> n.activation = Identity()
         >>> for epoch in range(0, 20):
         ...     loss = n.train( x = np.array([ [1, 2, 1, 2,  5, 6, 5, 6,  5, 6, 5, 6],

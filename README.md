@@ -18,7 +18,7 @@
   * ~~Recurrent Network~~
   * [Autoencoder Network](https://github.com/wbaek/machinelearning/blob/master/README.md#auto-encoder)
 * Layer
-  * [Fullconnect Layer](https://github.com/wbaek/machinelearning/blob/master/core/layer.py)
+  * [Fullconnect Layer](https://github.com/wbaek/machinelearning/blob/master/core/layers/fullconnect.py)
   * ~~Dropout Layer~~
   * ~~Convolution Layer~~
 * Nonlinear Function
@@ -52,15 +52,15 @@ pip install -r requirements.txt
 * each input is assigned to one of K mutually exclusive classes.
 ```python
 >>> from core.network import Network
->>> from core.layer import Layer
+>>> from core.layers import Fullconnect
 >>> from core.nonlinears import ReLu
 >>> from core.activations import Softmax
 >>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
 >>> 
 >>> n = Network()
->>> n.layers.append( Layer(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
->>> n.layers.append( Layer(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Fullconnect(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Fullconnect(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.activation = Softmax()
 >>> 
 >>> for epoch in range(0, 20):
@@ -84,15 +84,15 @@ epoch:0015 loss:0.18
 ### Multiple-class Classification
 ```python
 >>> from core.network import Network
->>> from core.layer import Layer
+>>> from core.layers import Fullconnect
 >>> from core.nonlinears import ReLu
 >>> from core.activations import Sigmoid
 >>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
 >>> 
 >>> n = Network()
->>> n.layers.append( Layer(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
->>> n.layers.append( Layer(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Fullconnect(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Fullconnect(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.activation = Sigmoid()
 >>> 
 >>> for epoch in range(0, 20):
@@ -115,15 +115,15 @@ epoch:0015 loss:3.97
 ### Regression
 ```python
 >>> from core.network import Network
->>> from core.layer import Layer
+>>> from core.layers import Fullconnect
 >>> from core.nonlinears import ReLu
 >>> from core.activations import Identity
 >>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
 >>> 
 >>> n = Network()
->>> n.layers.append( Layer(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
->>> n.layers.append( Layer(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Fullconnect(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Fullconnect(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.activation = Identity()
 >>> 
 >>> for epoch in range(0, 20):
@@ -146,17 +146,17 @@ epoch:0015 loss:2.00
 ### Auto-encoder
 ```python
 >>> from core.network import Network
->>> from core.layer import Layer
+>>> from core.layers import Fullconnect
 >>> from core.nonlinears import ReLu
 >>> from core.activations import Identity
 >>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
 >>> 
 >>> n = Network()
->>> n.layers.append( Layer( 2, 10, updater=GradientDescent(learning_rate=0.001)) )
->>> n.layers.append( Layer(10, 10, Tanh.function, Tanh.derivative, GradientDescent(learning_rate=0.001)) )
->>> n.layers.append( Layer(10, 10, updater=GradientDescent(learning_rate=0.001)) )
->>> n.layers.append( Layer(10,  2, updater=GradientDescent(learning_rate=0.001)) )
+>>> n.layers.append( Fullconnect( 2, 10, updater=GradientDescent(learning_rate=0.001)) )
+>>> n.layers.append( Fullconnect(10, 10, Tanh.function, Tanh.derivative, GradientDescent(learning_rate=0.001)) )
+>>> n.layers.append( Fullconnect(10, 10, updater=GradientDescent(learning_rate=0.001)) )
+>>> n.layers.append( Fullconnect(10,  2, updater=GradientDescent(learning_rate=0.001)) )
 >>> n.activation = Identity()
 >>> 
 >>> # for auto-encoder (weight share)

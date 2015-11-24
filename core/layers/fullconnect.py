@@ -1,9 +1,13 @@
 import math
 import numpy as np
-from nonlinears.linear import Linear
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
+from nonlinears import Linear
 from updaters.gradient_descent import GradientDescent
 
-class Layer:
+class Fullconnect:
     def __init__(self, input_size, output_size,
             nonlinear_function=Linear.function, derivative_function=Linear.derivative,
             updater=GradientDescent() ):
@@ -36,7 +40,7 @@ class Layer:
     def __test(self):
         '''
         >>> x = np.array([[1],[2],[3]])
-        >>> l = Layer(3, 4)
+        >>> l = Fullconnect(3, 4)
         >>> l.W = np.eye(4, 3)
         >>> l.b = np.array([[0.3], [0.5], [0], [0]])
         >>> y = l.forward( x )
