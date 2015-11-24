@@ -23,7 +23,7 @@
   * [tanh](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/tanh.py)
 * Activation \w Negative Log Likelihood Loss
   * [Softmax \w cross-entropy error](https://github.com/wbaek/machinelearning/blob/master/core/activations/softmax.py)
-  * ~~Sigmoid \w cross-entropy error~~
+  * [Sigmoid \w cross-entropy error](https://github.com/wbaek/machinelearning/blob/master/core/activations/sigmoid.py)
   * ~~Identity \w sum-of-squre error~~
 * Updater
   * Vanila [Gradient Descent](https://github.com/wbaek/machinelearning/blob/master/core/updaters/gradient_descent.py)
@@ -49,8 +49,8 @@ pip install -r requirements.txt
 >>> from core.network import Network
 >>> from core.layer import Layer
 >>> from core.nonlinears import ReLu
->>> from core.activations.softmax import Softmax
->>> from core.updaters.gradient_descent import GradientDescent
+>>> from core.activations import Softmax
+>>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
 >>> n = Network()
 >>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
@@ -63,10 +63,10 @@ pip install -r requirements.txt
 ...                                    [0, 0, 0, 0,  1, 1, 1, 1]]) )
 ...     if epoch%5 == 0:
 ...         print 'epoch:%04d loss:%.2f'%(epoch, loss)
-epoch:0000 loss:4.92
-epoch:0005 loss:0.19
-epoch:0010 loss:0.12
-epoch:0015 loss:0.09
+epoch:0000 loss:9.84
+epoch:0005 loss:0.37
+epoch:0010 loss:0.24
+epoch:0015 loss:0.18
 >>> y = n.predict( np.array( [[1, 6, 3], [5, 1, 4]] ) )
 >>> [_ for _ in np.argmax(y, 0)]
 [0, 1, 0]
@@ -74,7 +74,32 @@ epoch:0015 loss:0.09
 
 
 ### Multiple-class Classification
-* not yet
+```
+>>> from core.network import Network
+>>> from core.layer import Layer
+>>> from core.nonlinears import ReLu
+>>> from core.activations import Sigmoid
+>>> from core.updaters import GradientDescent
+>>> np.random.seed(0xC0FFEE)
+>>> n = Network()
+>>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Layer(10, 2, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.activation = Sigmoid()
+>>> for epoch in range(0, 20):
+...     loss = n.train( x = np.array([ [1, 2, 1, 2,  5, 6, 5, 6,  5, 6, 5, 6],
+...                                    [5, 4, 4, 5,  5, 4, 5, 4,  1, 2, 2, 1]]),
+...                target = np.array([ [1, 1, 1, 1,  1, 1, 1, 1,  0, 0, 0, 0],
+...                                    [0, 0, 0, 0,  1, 1, 1, 1,  1, 1, 1, 1]]) )
+...     if epoch%5 == 0:
+...         print 'epoch:%04d loss:%.2f'%(epoch, loss)
+epoch:0000 loss:17.45
+epoch:0005 loss:9.05
+epoch:0010 loss:5.83
+epoch:0015 loss:3.97
+>>> y = n.predict( np.array( [[1, 6, 3, 5], [5, 1, 4, 5]] ) )
+>>> [['%.2f'%_ for _ in v] for v in y]
+[['0.96', '0.06', '0.95', '0.95'], ['0.13', '0.99', '0.56', '0.86']]
+```
 
 
 
