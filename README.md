@@ -8,14 +8,17 @@
 
 
 ## Features
+* Network
+  * [Feedforward Network](https://github.com/wbaek/machinelearning/blob/master/core/network.py)
+  * ~~Recurrent Network~~
 * Layer
-  * Fullconnect Layer
+  * [Fullconnect Layer](https://github.com/wbaek/machinelearning/blob/master/core/layer.py)
   * ~~Convolution Layer~~
 * Nonlinear Function
-  * tanh
-  * ReLu
+  * [ReLu](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/relu.py)
+  * [tanh](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/tanh.py)
 * Activation \w Loss
-  * Softmax \w cross-entropy error
+  * [Softmax \w cross-entropy error](https://github.com/wbaek/machinelearning/blob/master/core/activations/softmax.py)
   * ~~Sigmoid \w cross-entropy error~~
   * ~~Identity \w sum-of-squre error~~
 * Updater
