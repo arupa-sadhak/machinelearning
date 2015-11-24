@@ -1,10 +1,15 @@
 # machinelearning [![Build Status](https://travis-ci.org/wbaek/machinelearning.svg?branch=master)](https://travis-ci.org/wbaek/machinelearning)
 
-내용만 알면 간단하게 구현할 수 있는 neural network에 대한 이론 정리 및 구현내용 입니다.
+내용만 알면 간단하게 구현할 수 있는 neural network에 대한 이론 정리 및 구현내용이다.
 
-각 코드는 초기화 및 테스트코드를 제외한 10~20줄 내외로 정리되어 있습니다.
+다음 코드는 각 모듈에서 필요한 코드만 발췌해 70여줄로 구현한 예이다.
+[fullconnect multiclass classification source code](https://gist.github.com/wbaek/05201f13130fa005cb33)
 
-현재는 코드만 있고 이론적인 내용은 추가해갈 예정입니다.
+
+각 코드는 초기화 및 테스트코드를 제외한 10~20줄 내외로 정리되어있다.
+
+현재는 코드만 있고 이론적인 내용은 추가해갈 예정이다.
+
 
 
 ## Features
