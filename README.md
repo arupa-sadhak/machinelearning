@@ -13,6 +13,7 @@
   * ~~Recurrent Network~~
 * Layer
   * [Fullconnect Layer](https://github.com/wbaek/machinelearning/blob/master/core/layer.py)
+  * ~~Dropout Layer~~
   * ~~Convolution Layer~~
 * Nonlinear Function
   * [ReLu](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/relu.py)
