@@ -15,10 +15,10 @@
 ## Features
 * Network
   * [Feedforward Network](https://github.com/wbaek/machinelearning/blob/master/core/network.py)
-  * ~~Recurrent Network~~
   * [Autoencoder Network](https://github.com/wbaek/machinelearning/blob/master/README.md#auto-encoder)
 * Layer
   * [Fullconnect Layer](https://github.com/wbaek/machinelearning/blob/master/core/layers/fullconnect.py)
+  * [Recurrent Layer](https://github.com/wbaek/machinelearning/blob/master/core/layers/recurrent.py)
   * ~~Dropout Layer~~
   * ~~Convolution Layer~~
 * Nonlinear Function
@@ -163,12 +163,12 @@ epoch:0015 loss:2.00
 >>> n.layers[2].W = n.layers[1].W.T
 >>> n.layers[3].W = n.layers[0].W.T
 >>> x = np.array( [[1, 2, 1, 2,  5, 6, 5, 6,  5, 6, 5, 6],
->>>                [5, 4, 4, 5,  5, 4, 5, 4,  1, 2, 2, 1]] )
+...                [5, 4, 4, 5,  5, 4, 5, 4,  1, 2, 2, 1]] )
 >>> 
 >>> for epoch in range(0, 51):
->>>     loss = n.train( x=x, target=x )
->>>     if epoch%5 == 0:
->>>         print 'epoch:%04d loss:%.2f'%(epoch, loss)
+...     loss = n.train( x=x, target=x )
+...     if epoch%5 == 0:
+...         print 'epoch:%04d loss:%.2f'%(epoch, loss)
 epoch:0000 loss:61.98
 epoch:0005 loss:37.56
 epoch:0010 loss:25.72
@@ -180,4 +180,54 @@ epoch:0035 loss:9.71
 epoch:0040 loss:8.80
 epoch:0045 loss:8.12
 epoch:0050 loss:7.62
+```
+
+### Recurrent Network
+```python
+>>> import numpy as np
+>>> from core.network import Network
+>>> from core.layers import Fullconnect, Recurrent
+>>> from core.activations import Softmax
+>>> from core.nonlinears import Linear, ReLu, Tanh
+>>> from core.updaters import GradientDescent
+>>> 
+>>> np.random.seed(0xC0FFEE)
+>>> learning_rate = 0.01
+>>> n = Network()
+>>> n.layers.append( Recurrent(2, 10, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
+>>> n.layers.append( Fullconnect(10, 2, updater=GradientDescent(learning_rate)) )
+
+>>> input  = np.array([[1, 2, 3, 4, 5, 4, 3, 2, 1, 0],
+...                    [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]])
+>>> target = np.array([[1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
+...                    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0]])
+>>> 
+>>> for epoch in range(0, 1001):
+...    loss = 0
+...     n.init()
+...     for x, t in zip(input.T, target.T):
+...         loss += n.train( x.reshape(2, 1), t.reshape(2, 1) )
+...     if epoch%10 == 0:
+...         print 'epoch:%04d loss:%.2f'%(epoch, loss)
+epoch:0000 loss:6.07
+epoch:0010 loss:3.35
+epoch:0020 loss:3.07
+...
+epoch:0980 loss:0.28
+epoch:0990 loss:0.28
+epoch:1000 loss:0.28
+>>> n.init()
+>>> for x, t in zip(input.T, target.T):
+...     y = n.predict( x.reshape(2, 1) )
+...     print 'x=', ','.join(['%.2f'%_ for _ in x]), 'y=', ','.join(['%.2f'%_ for _ in y])
+x= 1.00,1.00 y= 1.00,0.00
+x= 2.00,2.00 y= 1.00,0.00
+x= 3.00,1.00 y= 1.00,0.00
+x= 4.00,2.00 y= 0.99,0.01
+x= 5.00,1.00 y= 0.97,0.03
+x= 4.00,2.00 y= 0.18,0.82
+x= 3.00,1.00 y= 0.97,0.03
+x= 2.00,2.00 y= 0.97,0.03
+x= 1.00,1.00 y= 1.00,0.00
+x= 0.00,2.00 y= 1.00,0.00
 ```
