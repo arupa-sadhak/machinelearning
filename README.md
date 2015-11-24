@@ -53,8 +53,8 @@ pip install -r requirements.txt
 >>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
 >>> n = Network()
->>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
->>> n.layers.append( Layer(10, 2, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Layer(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Layer(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.activation = Softmax()
 >>> for epoch in range(0, 20):
 ...     loss = n.train( x = np.array([ [1, 2, 1, 2,  5, 6, 5, 6],
@@ -82,8 +82,8 @@ epoch:0015 loss:0.18
 >>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
 >>> n = Network()
->>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
->>> n.layers.append( Layer(10, 2, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Layer(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Layer(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.activation = Sigmoid()
 >>> for epoch in range(0, 20):
 ...     loss = n.train( x = np.array([ [1, 2, 1, 2,  5, 6, 5, 6,  5, 6, 5, 6],
