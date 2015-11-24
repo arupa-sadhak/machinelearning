@@ -18,6 +18,7 @@
   * ~~Convolution Layer~~
   * ~~SharedWeight Layer~~
 * Nonlinear Function
+  * [Linear](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/linear.py)
   * [ReLu](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/relu.py)
   * [tanh](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/tanh.py)
 * Activation \w Negative Log Likelihood Loss
@@ -25,11 +26,11 @@
   * ~~Sigmoid \w cross-entropy error~~
   * ~~Identity \w sum-of-squre error~~
 * Updater
-  * Vanila Gradient Updater
+  * Vanila [Gradient Descent](https://github.com/wbaek/machinelearning/blob/master/core/updaters/gradient_descent.py)
   * ~~Momentum~~
   * ~~AdaGradient~~
 * Initializer
-  * Xavier Initializer
+  * Xavier (implement in Network init function)
   * ~~Kaiming Initializer~~
 * Aggregator
   * ~~Comcat~~
@@ -47,12 +48,13 @@ pip install -r requirements.txt
 ```python
 >>> from core.network import Network
 >>> from core.layer import Layer
->>> from core.nonlinears.relu import ReLu
+>>> from core.nonlinears import ReLu
 >>> from core.activations.softmax import Softmax
+>>> from core.updaters.gradient_descent import GradientDescent
 >>> np.random.seed(0xC0FFEE)
 >>> n = Network()
->>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative) )
->>> n.layers.append( Layer(10, 2) )
+>>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Layer(10, 2, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.activation = Softmax()
 >>> for epoch in range(0, 20):
 ...     loss = n.train( x = np.array([ [1, 2, 1, 2,  5, 6, 5, 6],
