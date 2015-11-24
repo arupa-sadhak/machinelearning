@@ -11,10 +11,12 @@
 * Network
   * [Feedforward Network](https://github.com/wbaek/machinelearning/blob/master/core/network.py)
   * ~~Recurrent Network~~
+  * ~~Autoencoder Network~~
 * Layer
   * [Fullconnect Layer](https://github.com/wbaek/machinelearning/blob/master/core/layer.py)
   * ~~Dropout Layer~~
   * ~~Convolution Layer~~
+  * ~~SharedWeight Layer~~
 * Nonlinear Function
   * [ReLu](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/relu.py)
   * [tanh](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/tanh.py)
