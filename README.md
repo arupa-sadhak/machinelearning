@@ -1,7 +1,9 @@
 # machinelearning [![Build Status](https://travis-ci.org/wbaek/machinelearning.svg?branch=master)](https://travis-ci.org/wbaek/machinelearning)
 
 내용만 알면 간단한 neural network에 대한 이론 정리 및 구현내용 입니다.
+
 각 코드는 test코드를 제외한 30줄 내외로 정리되어 있습니다.
+
 현재는 코드만 있고 이론적인 내용은 추가해갈 예정입니다.
 
 
