@@ -38,8 +38,8 @@ pip install -r requirements.txt
 ```python
 >>> from core.network import Network
 >>> from core.layer import Layer
->>> from nonlinears.relu import ReLu
->>> from activations.softmax import Softmax
+>>> from core.nonlinears.relu import ReLu
+>>> from core.activations.softmax import Softmax
 >>> np.random.seed(0xC0FFEE)
 >>> n = Network()
 >>> n.layers.append( Layer(2, 10, ReLu.function, ReLu.derivative) )
