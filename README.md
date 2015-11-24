@@ -6,7 +6,7 @@
 [fullconnect multiclass classification source code](https://gist.github.com/wbaek/05201f13130fa005cb33)
 
 
-각 코드는 초기화 및 테스트코드를 제외한 10~20줄 내외로 정리되어있다.
+각 모듈는 초기화 및 테스트코드를 제외한 10~20줄 내외로 정리되어있다.
 
 현재는 코드만 있고 이론적인 내용은 추가해갈 예정이다.
 
