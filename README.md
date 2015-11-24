@@ -2,7 +2,7 @@
 
 내용만 알면 간단하게 구현할 수 있는 neural network에 대한 이론 정리 및 구현내용이다.
 
-다음 코드는 각 모듈에서 필요한 코드만 발췌해 70여줄로 구현한 예이다.
+다음 코드는 각 모듈에서 필요한 코드만 발췌해 80여줄로 구현한 예이다.
 [fullconnect multiclass classification source code](https://gist.github.com/wbaek/05201f13130fa005cb33)
 
 
