@@ -22,6 +22,7 @@
   * [Linear](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/linear.py)
   * [ReLu](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/relu.py)
   * [tanh](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/tanh.py)
+  * ~~Binarizer~~
 * Activation \w Negative Log Likelihood Loss
   * [Softmax \w cross-entropy error](https://github.com/wbaek/machinelearning/blob/master/core/activations/softmax.py)
   * [Sigmoid \w cross-entropy error](https://github.com/wbaek/machinelearning/blob/master/core/activations/sigmoid.py)
