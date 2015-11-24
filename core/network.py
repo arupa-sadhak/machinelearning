@@ -5,6 +5,11 @@ class Network:
     def __init__(self):
         self.layers = []
         self.activation = Softmax()
+        self.init()
+
+    def init(self):
+        for layer in self.layers:
+            layer.init()
 
     def predict(self, x):
         _ = x
