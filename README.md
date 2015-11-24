@@ -16,6 +16,7 @@
 * Network
   * [Feedforward Network](https://github.com/wbaek/machinelearning/blob/master/core/network.py)
   * [Autoencoder Network](https://github.com/wbaek/machinelearning/blob/master/README.md#auto-encoder)
+  * [Recurrent Network](https://github.com/wbaek/machinelearning/blob/master/README.md#recurrent-network)
 * Layer
   * [Fullconnect Layer](https://github.com/wbaek/machinelearning/blob/master/core/layers/fullconnect.py)
   * [Recurrent Layer](https://github.com/wbaek/machinelearning/blob/master/core/layers/recurrent.py)
