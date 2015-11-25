@@ -8,16 +8,11 @@ from nonlinears import Linear
 from updaters.gradient_descent import GradientDescent
 from layers import Fullconnect
 
-class Recurrent:
+class Recurrent(Fullconnect):
     def __init__(self, input_size, output_size,
             nonlinear_function=Linear.function, derivative_function=Linear.derivative,
             updater=GradientDescent() ):
-        self.input_size = input_size
-        self.output_size = output_size
-
-        self.reucrrent_layer = Fullconnect(input_size+output_size, output_size,
-            nonlinear_function, derivative_function, updater)
-        self.init()
+        super(Recurrent, self).__init__(input_size+output_size, output_size, nonlinear_function, derivative_function, updater)
 
     def init(self):
         self.recurrent_output = None
@@ -27,13 +22,13 @@ class Recurrent:
         if self.recurrent_output == None:
             self.recurrent_output = np.zeros( (self.output_size, x.shape[1]) )
         self.x = np.concatenate( [x, self.recurrent_output], axis=0 )
-        self.recurrent_output = self.reucrrent_layer.forward( self.x )
+        self.recurrent_output = super(Recurrent, self).forward( self.x )
         return self.recurrent_output
 
     def backward(self, delta):
         if self.recurrent_delta == None:
             self.recurrent_delta = np.zeros_like( delta )
-        _, self.recurrent_delta = np.vsplit( self.reucrrent_layer.backward(delta + self.recurrent_delta), [self.input_size] )
+        _, self.recurrent_delta = np.vsplit( super(Recurrent, self).backward(delta + self.recurrent_delta), [self.input_size-self.output_size] )
         return _
 
     def update(self):

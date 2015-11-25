@@ -1,6 +1,6 @@
 import numpy as np
 
-class Identity:
+class Identity(object):
     def __init__(self):
         pass
 

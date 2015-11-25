@@ -1,6 +1,6 @@
 import numpy as np
 
-class Tanh:
+class Tanh(object):
     def __init__(self):
         pass
 

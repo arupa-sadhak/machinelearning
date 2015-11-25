@@ -1,6 +1,6 @@
 import numpy as np
 
-class ReLu:
+class ReLu(object):
     def __init__(self):
         pass
 

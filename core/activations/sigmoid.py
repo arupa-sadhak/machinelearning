@@ -1,6 +1,6 @@
 import numpy as np
 
-class Sigmoid:
+class Sigmoid(object):
     def __init__(self):
         pass
 

@@ -1,7 +1,7 @@
 import numpy as np
-from activations.softmax import Softmax
+from activations import Softmax, Sigmoid, Identity
 
-class Network:
+class Network(object):
     def __init__(self):
         self.layers = []
         self.activation = Softmax()
@@ -24,6 +24,15 @@ class Network:
             _ = layer.backward( _ )
             layer.update()
         return self.activation.loss( y, target )
+
+    def dump_params(self):
+        odict = {}
+        odict['layers'] = [(l.W, l.b) for l in self.layers]
+        return odict
+
+    def load_params(self, idict):
+        for l, p in zip(self.layers, idict['layers']):
+            l.W, l.b= p
 
     def __test(self):
         '''

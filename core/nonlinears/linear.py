@@ -1,6 +1,6 @@
 import numpy as np
 
-class Linear:
+class Linear(object):
     def __init__(self):
         pass
 
