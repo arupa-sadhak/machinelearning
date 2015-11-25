@@ -31,29 +31,35 @@ def onehotvector(cwords, vocsize, y=[], nclasses=1):
 def main(args):
     #np.random.seed(0xC0FFEE)
 
-    train, test, dicts = pkl.load( open('datas/atis.pkl', 'r') )
-    index2words = {value:key for key, value in dicts['words2idx'].iteritems()}
-    index2tables = {value:key for key, value in dicts['tables2idx'].iteritems()}
-    index2labels = {value:key for key, value in dicts['labels2idx'].iteritems()}
+    logging.info('load data start')
+    train_lex, train_y = pkl.load( open('datas/kowiki_spacing_train.pkl', 'r') )
+    words2idx = pkl.load( open('datas/kowiki_dict.pkl', 'r') )
+    logging.info('load data done')
 
-    train_lex, train_ne, train_y = train
-    test_lex, test_ne, test_y = test
-    vocsize = len(dicts['words2idx']) + 1
-    nclasses = len(dicts['labels2idx'])
+    index2words = {value:key for key, value in words2idx.iteritems()}
+
+    vocsize = len(words2idx) + 1
+    nclasses = 2
     nsentences = len(train_lex)
+    max_iter = min(args.samples, nsentences)
+    logging.info('vocsize:%d, nclasses:%d, nsentences:%d, samples:%d, max_iter:%d'%(vocsize, nclasses, nsentences, args.samples, max_iter))
 
     context_window_size = 7
 
-    learning_rate = 0.005
+    learning_rate = 0.01
     n = Network()
     n.layers.append( Fullconnect(vocsize, 100, Linear.function, Linear.derivative,  updater=GradientDescent(learning_rate)) )
     n.layers.append( Recurrent(100, 100, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
     n.layers.append( Fullconnect(100, nclasses, updater=GradientDescent(learning_rate)) )
     n.activation = Softmax()
 
-    for epoch in range(0, 11):
+    if os.path.isfile( args.params ):
+        n.load_params( pkl.load(open(args.params, 'rb')) )
+
+    logging.info('train start')
+    for epoch in range(0, 20):
         epoch_loss = 0
-        for i in xrange(nsentences):
+        for i in xrange( max_iter ):
             cwords = contextwin(train_lex[i], context_window_size)
             words, labels = onehotvector(cwords, vocsize, train_y[i], nclasses)
 
@@ -62,11 +68,15 @@ def main(args):
                 loss += n.train( x.reshape(vocsize, 1), t.reshape(nclasses, 1) )
             loss /= len(words.T)
             epoch_loss += loss
-            if i%1000 == 0:
-                logging.info( 'epoch:%04d iter:%04d loss:%.2f'%(epoch, i, epoch_loss/(i+1)) )
+            if i%10 == 0:
+                logging.info('[%.4f%%] epoch:%04d iter:%04d loss:%.2f'%((i+1)/float(max_iter), epoch, i, epoch_loss/(i+1)))
 
-        logging.info( 'epoch:%04d loss:%.2f'%(epoch, epoch_loss/nsentences) )
+        logging.info('epoch:%04d loss:%.2f'%(epoch, epoch_loss/max_iter))
+        pkl.dump( n.dump_params(), open(args.params, 'wb') )
+        logging.info('dump params at %s'%(args.params))
 
+
+        '''
         for i in range(10):
             idx = random.randint(0, len(test_lex))
             cwords = contextwin(test_lex[idx], context_window_size)
@@ -80,11 +90,13 @@ def main(args):
             print 'word:   ', ' '.join([index2words[_] for _ in test_lex[idx]])
             print 'label:  ', ' '.join([index2labels[_] for _ in labels])
             print 'predict:', ' '.join([index2labels[_] for _ in y])
-
+        '''
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--params',         type=str, required=True)
+    parser.add_argument('-n', '--samples',        type=int, default=10000 )
     parser.add_argument('--log-filename',         type=str, default='')
     args = parser.parse_args()
 

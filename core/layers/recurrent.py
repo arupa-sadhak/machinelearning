@@ -31,9 +31,6 @@ class Recurrent(Fullconnect):
         _, self.recurrent_delta = np.vsplit( super(Recurrent, self).backward(delta + self.recurrent_delta), [self.input_size-self.output_size] )
         return _
 
-    def update(self):
-        self.reucrrent_layer.update()
-
     def __test(self):
         '''
         >>> np.random.seed(0xC0FFEE)
