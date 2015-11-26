@@ -30,7 +30,9 @@ class Fullconnect(object):
         return np.dot( self.W.T, self.delta_a )
 
     def get_gradient(self):
-        return ( np.dot(self.delta_a, self.x.T), np.dot(self.delta_a, np.ones((self.delta_a.shape[1], 1))) )
+        delta_W = np.dot(self.delta_a, self.x.T)
+        delta_b = np.dot(self.delta_a, np.ones((self.delta_a.shape[1], 1)))
+        return (delta_W, delta_b )
 
     def update(self):
         for param, gradient in zip([self.W, self.b], self.get_gradient()):
