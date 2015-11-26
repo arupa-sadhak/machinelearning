@@ -131,6 +131,7 @@ class Network(object):
         epoch:0700 loss:1.99
         epoch:0800 loss:1.97
         epoch:0900 loss:1.95
+        epoch:1000 loss:1.93
         '''
         pass
 
