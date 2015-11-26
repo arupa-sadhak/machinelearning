@@ -36,7 +36,7 @@
   * ~~Momentum~~
   * ~~AdaGradient~~
 * Initializer
-  * Xavier (implemented in Layer init function)
+  * [Xavier](https://github.com/wbaek/machinelearning/blob/master/core/layers/fullconnect.py#L17) (implemented in Layer init function)
   * ~~Kaiming Initializer~~
 
 ## Requirements
