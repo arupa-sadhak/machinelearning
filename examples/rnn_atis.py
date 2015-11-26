@@ -19,13 +19,13 @@ def contextwin(l, win):
     return out
 
 def onehotvector(cwords, vocsize, y=[], nclasses=1):
-    words = [np.zeros( (vocsize, 1) )] * len(cwords)
+    words = np.zeros( (vocsize, len(cwords)) )
     for idx1, cword in enumerate(cwords):
         for idx2 in cword:
-            words[idx1][idx2] = 1
-    labels = [np.zeros( (nclasses, 1) )] * len(cwords)
+            words[idx2][idx1] = 1
+    labels = np.zeros( (nclasses, len(cwords)) )
     for i, _ in enumerate(y):
-        labels[i][_] = 1
+        labels[_][i] = 1
     return (words, labels)
 
 def main(args):
@@ -44,9 +44,10 @@ def main(args):
 
     context_window_size = 7
 
-    learning_rate = 0.000001
+    learning_rate = 0.005
     n = Network()
-    n.layers.append( Recurrent(vocsize, 100, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
+    n.layers.append( Fullconnect(vocsize, 100, Linear.function, Linear.derivative,  updater=GradientDescent(learning_rate)) )
+    n.layers.append( Recurrent(100, 100, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
     n.layers.append( Fullconnect(100, nclasses, updater=GradientDescent(learning_rate)) )
     n.activation = Softmax()
 
@@ -56,7 +57,10 @@ def main(args):
             cwords = contextwin(train_lex[i], context_window_size)
             words, labels = onehotvector(cwords, vocsize, train_y[i], nclasses)
 
-            loss = n.train( words, np.concatenate(labels, axis=1) )
+            loss = 0
+            for x, t in zip(words.T, labels.T):
+                loss += n.train( x.reshape(vocsize, 1), t.reshape(nclasses, 1) )
+            loss /= len(words.T)
             epoch_loss += loss
             if i%1000 == 0:
                 logging.info( 'epoch:%04d iter:%04d loss:%.2f'%(epoch, i, epoch_loss/(i+1)) )
@@ -68,7 +72,10 @@ def main(args):
             cwords = contextwin(test_lex[idx], context_window_size)
             words = onehotvector(cwords, vocsize)[0]
             labels = test_y[idx]
-            y = [np.argmax(_) for _ in n.predict( words )]
+            y = []
+            n.init()
+            for x in words.T:
+                y.append( np.argmax(n.predict( x.reshape(vocsize, 1) )) )
 
             print 'word:   ', ' '.join([index2words[_] for _ in test_lex[idx]])
             print 'label:  ', ' '.join([index2labels[_] for _ in labels])

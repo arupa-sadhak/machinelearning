@@ -50,10 +50,6 @@ class Recurrent(Fullconnect):
 
         return input_delta
 
-    def update(self):
-        for layer in self.unfolded_layers:
-            layer.update()
-
     def __test(self):
         '''
         >>> np.random.seed(0xC0FFEE)
