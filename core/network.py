@@ -107,7 +107,7 @@ class Network(object):
         >>> # Auto-encoder
         >>> from core.updaters import NotUpdate
         >>> n = Network()
-        >>> n.layers.append( Fullconnect( 2, 10, updater=GradientDescent(learning_rate=0.001)) )
+        >>> n.layers.append( Fullconnect( 2, 10, Tanh.function, Tanh.derivative, GradientDescent(learning_rate=0.001)) )
         >>> n.layers.append( Fullconnect(10, 10, Tanh.function, Tanh.derivative, GradientDescent(learning_rate=0.001)) )
         >>> n.layers.append( Fullconnect(10, 10, updater=NotUpdate()) )
         >>> n.layers.append( Fullconnect(10,  2, updater=NotUpdate()) )
@@ -121,17 +121,16 @@ class Network(object):
         ...     loss = n.train( x=x, target=x )
         ...     if epoch%100 == 0:
         ...         print 'epoch:%04d loss:%.2f'%(epoch, loss)
-        epoch:0000 loss:53.29
-        epoch:0100 loss:13.46
-        epoch:0200 loss:10.27
-        epoch:0300 loss:8.39
-        epoch:0400 loss:7.99
-        epoch:0500 loss:8.04
-        epoch:0600 loss:8.34
-        epoch:0700 loss:8.45
-        epoch:0800 loss:8.17
-        epoch:0900 loss:8.03
-        epoch:1000 loss:7.97
+        epoch:0000 loss:101.72
+        epoch:0100 loss:4.93
+        epoch:0200 loss:2.92
+        epoch:0300 loss:2.38
+        epoch:0400 loss:2.17
+        epoch:0500 loss:2.07
+        epoch:0600 loss:2.02
+        epoch:0700 loss:1.99
+        epoch:0800 loss:1.97
+        epoch:0900 loss:1.95
         '''
         pass
 
