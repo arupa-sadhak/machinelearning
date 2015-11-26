@@ -19,10 +19,6 @@ class Fullconnect(object):
         self.nonlinear_function = nonlinear_function
         self.derivative_function = derivative_function
         self.updater = updater
-        self.init()
-
-    def init(self):
-        pass
 
     def forward(self, x):
         self.x = x

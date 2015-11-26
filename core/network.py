@@ -5,11 +5,6 @@ class Network(object):
     def __init__(self):
         self.layers = []
         self.activation = Softmax()
-        self.init()
-
-    def init(self):
-        for layer in self.layers:
-            layer.init()
 
     def predict(self, x):
         _ = x
@@ -131,6 +126,7 @@ class Network(object):
         epoch:0700 loss:1.99
         epoch:0800 loss:1.97
         epoch:0900 loss:1.95
+        epoch:1000 loss:1.93
         '''
         pass
 
