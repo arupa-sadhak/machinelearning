@@ -44,7 +44,7 @@ def main(args):
     max_iter = min(args.samples, nsentences)
     logging.info('vocsize:%d, nclasses:%d, nsentences:%d, samples:%d, max_iter:%d'%(vocsize, nclasses, nsentences, args.samples, max_iter))
 
-    context_window_size = 7
+    context_window_size = 1
 
     learning_rate = 0.01
     n = Network()
