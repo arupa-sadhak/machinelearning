@@ -148,36 +148,37 @@ epoch:0015 loss:2.00
 >>> from core.nonlinears import ReLu
 >>> from core.activations import Identity
 >>> from core.updaters import GradientDescent
+>>> from core.updaters import NotUpdate
 >>> np.random.seed(0xC0FFEE)
 >>> 
 >>> n = Network()
->>> n.layers.append( Fullconnect( 2, 10, updater=GradientDescent(learning_rate=0.001)) )
+>>> n.layers.append( Fullconnect( 2, 10, Tanh.function, Tanh.derivative, GradientDescent(learning_rate=0.001)) )
 >>> n.layers.append( Fullconnect(10, 10, Tanh.function, Tanh.derivative, GradientDescent(learning_rate=0.001)) )
->>> n.layers.append( Fullconnect(10, 10, updater=GradientDescent(learning_rate=0.001)) )
->>> n.layers.append( Fullconnect(10,  2, updater=GradientDescent(learning_rate=0.001)) )
+>>> n.layers.append( Fullconnect(10, 10, updater=NotUpdate()) )
+>>> n.layers.append( Fullconnect(10,  2, updater=NotUpdate()) )
 >>> n.activation = Identity()
->>> 
+>>>
 >>> # for auto-encoder (weight share)
 >>> n.layers[2].W = n.layers[1].W.T
 >>> n.layers[3].W = n.layers[0].W.T
+>>>
 >>> x = np.array( [[1, 2, 1, 2,  5, 6, 5, 6,  5, 6, 5, 6],
 ...                [5, 4, 4, 5,  5, 4, 5, 4,  1, 2, 2, 1]] )
->>> 
->>> for epoch in range(0, 51):
+>>>
+>>> for epoch in range(0, 1001):
 ...     loss = n.train( x=x, target=x )
-...     if epoch%5 == 0:
+...     if epoch%100 == 0:
 ...         print 'epoch:%04d loss:%.2f'%(epoch, loss)
-epoch:0000 loss:61.98
-epoch:0005 loss:37.56
-epoch:0010 loss:25.72
-epoch:0015 loss:19.55
-epoch:0020 loss:15.47
-epoch:0025 loss:12.76
-epoch:0030 loss:10.97
-epoch:0035 loss:9.71
-epoch:0040 loss:8.80
-epoch:0045 loss:8.12
-epoch:0050 loss:7.62
+epoch:0000 loss:101.72
+epoch:0100 loss:4.93
+epoch:0200 loss:2.92
+epoch:0300 loss:2.38
+epoch:0400 loss:2.17
+epoch:0500 loss:2.07
+epoch:0600 loss:2.02
+epoch:0700 loss:1.99
+epoch:0800 loss:1.97
+epoch:0900 loss:1.95
 ```
 
 ### Recurrent Network
