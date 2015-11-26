@@ -68,7 +68,7 @@ def main(args):
             cwords = contextwin(test_lex[idx], context_window_size)
             words = onehotvector(cwords, vocsize)[0]
             labels = test_y[idx]
-            y = [np.argmax(_) for _ in n.predict( words ).T]
+            y = [np.argmax(_) for _ in n.predict( words )]
 
             print 'word:   ', ' '.join([index2words[_] for _ in test_lex[idx]])
             print 'label:  ', ' '.join([index2labels[_] for _ in labels])
