@@ -38,9 +38,6 @@
 * Initializer
   * Xavier (implemented in Layer init function)
   * ~~Kaiming Initializer~~
-* Aggregator
-  * ~~Comcat~~
-  * ~~Reshape~~
 
 ## Requirements
 ```
