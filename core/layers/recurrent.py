@@ -14,65 +14,45 @@ class Recurrent(Fullconnect):
             updater=GradientDescent() ):
         super(Recurrent, self).__init__(input_size+output_size, output_size, nonlinear_function, derivative_function, updater)
 
+    def init(self):
+        self.recurrent_output = None
+        self.recurrent_delta = None
+
     def forward(self, x):
-        self.x = x
-        self.time_size = len(x)
-        self.minibatch_size = x[0].shape[1]
-
-        recurrent_output = [np.array([])] * (self.time_size+1)
-        recurrent_output[0] = np.zeros( (self.output_size, self.minibatch_size)  )
-
-        self.unfolded_layers = []
-        for t in xrange( self.time_size ):
-            splited_x = x[t]
-            splited_h = recurrent_output[t]
-            layer = Fullconnect(self.input_size, self.output_size,
-                self.nonlinear_function, self.derivative_function, self.updater)
-            layer.W = self.W
-            layer.b = self.b
-
-            recurrent_output[t+1] = layer.forward( np.concatenate( [splited_x, splited_h], axis=0 ) )
-            self.unfolded_layers.append( layer )
-        return np.concatenate( recurrent_output[1:], axis=1 )
+        if self.recurrent_output == None:
+            self.recurrent_output = np.zeros( (self.output_size, x.shape[1]) )
+        self.x = np.concatenate( [x, self.recurrent_output], axis=0 )
+        self.recurrent_output = super(Recurrent, self).forward( self.x )
+        return self.recurrent_output
 
     def backward(self, delta):
-        time_splited_delta = np.hsplit( delta, [self.minibatch_size*i for i in range(1, self.time_size)] )
-
-        recurrent_delta = [np.array([])] * (self.time_size+1)
-        recurrent_delta[-1] = np.zeros( (self.output_size, self.minibatch_size) )
-        input_delta = [np.array([])] * (self.time_size)
-
-        for t in reversed(range( self.time_size )):
-            splited_delta = time_splited_delta[t]
-
-            _ = self.unfolded_layers[t].backward( splited_delta + recurrent_delta[t+1] )
-            input_delta[t], recurrent_delta[t] = np.vsplit( _, [self.input_size-self.output_size] )
-
-        return input_delta
+        if self.recurrent_delta == None:
+            self.recurrent_delta = np.zeros_like( delta )
+        _, self.recurrent_delta = np.vsplit( super(Recurrent, self).backward(delta + self.recurrent_delta), [self.input_size-self.output_size] )
+        return _
 
     def __test(self):
         '''
         >>> np.random.seed(0xC0FFEE)
-        >>> x = [np.array([[1],[2],[3]])] * 2
+        >>> x = np.array([[1],[2],[3]])
         >>> l = Recurrent(3, 4)
         >>> y = l.forward( x )
         >>> y.shape
-        (4, 2)
+        (4, 1)
         >>> print ['%.1f'%_ for _ in np.asarray( y.T[0] )]
         ['2.9', '0.7', '3.4', '0.0']
-        >>> np.array_equal( y.T[0], y.T[1] )
+        >>> np.array_equal( y, l.forward( x ) )
         False
         >>> np.array_equal( y, l.forward( x ) )
-        True
-        >>> x = [np.array([[1, 2], [2, 3], [3, 4]])] * 2
+        False
+        >>> l.init()
+        >>> x = np.array([[1, 2], [2, 3], [3, 4]])
         >>> y = l.forward( x )
         >>> y.shape
-        (4, 4)
-        >>> delta = np.array([[1,2, 3, 4], [1,2, 3, 4], [1,2, 3, 4], [1,2, 3, 4]])
+        (4, 2)
+        >>> delta = np.array([[1,2], [1,2], [1,2], [1,2]])
         >>> d = l.backward( delta )
-        >>> len(x) == len(d)
-        True
-        >>> x[0].shape == d[0].shape
+        >>> x.shape == d.shape
         True
         '''
         pass
