@@ -66,7 +66,7 @@ def main(args):
             cwords = contextwin(train_lex[idx], context_window_size)
             words, labels = onehotvector(cwords, vocsize, train_y[idx], nclasses)
 
-            loss = n.train( words, labels )
+            loss = n.train( words, labels ) / len(words) # sequence normalized loss
             epoch_loss += loss
             if i%10 == 0:
                 logging.info('[%.4f%%] epoch:%04d iter:%04d loss:%.2f'%((i+1)/float(max_iter), epoch, i, epoch_loss/(i+1)))
