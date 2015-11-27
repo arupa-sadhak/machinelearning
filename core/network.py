@@ -136,12 +136,12 @@ class Network(object):
         epoch:0200 loss:1.79
         epoch:0300 loss:1.82
         epoch:0400 loss:2.53
-        epoch:0500 loss:3.92
-        epoch:0600 loss:1.02
+        epoch:0500 loss:3.91
+        epoch:0600 loss:1.00
         epoch:0700 loss:1.40
-        epoch:0800 loss:1.54
-        epoch:0900 loss:1.35
-        epoch:1000 loss:1.07
+        epoch:0800 loss:1.37
+        epoch:0900 loss:1.46
+        epoch:1000 loss:1.14
         '''
 
         pass

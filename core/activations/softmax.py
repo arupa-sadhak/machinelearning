@@ -2,7 +2,7 @@ import numpy as np
 
 class Softmax(object):
     def __init__(self):
-        pass
+        self.eps = 1e-6
 
     def forward(self, x):
         _ = np.exp(x)
@@ -12,7 +12,7 @@ class Softmax(object):
         return y - target
 
     def loss(self, y, target):
-        return - np.sum( np.log(y) * target )
+        return - np.sum( np.log(y+self.eps) * target )
 
     def __test(self):
         '''

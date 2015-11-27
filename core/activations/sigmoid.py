@@ -2,7 +2,7 @@ import numpy as np
 
 class Sigmoid(object):
     def __init__(self):
-        pass
+        self.eps = 1e-6
 
     def forward(self, x):
         return 1. / (1. + np.exp(-x))
@@ -11,7 +11,7 @@ class Sigmoid(object):
         return y - target
 
     def loss(self, y, target):
-        return - np.sum( np.log(y) * target + np.log(1.-y) * (1.0 - target) )
+        return - np.sum( np.log(y+self.eps) * target + np.log(1.-y+self.eps) * (1.0 - target) )
 
     def __test(self):
         '''
