@@ -30,7 +30,7 @@ def onehotvector(cwords, vocsize, y=[], nclasses=1):
     return (words, labels)
 
 def main(args):
-    #np.random.seed(0xC0FFEE)
+    np.random.seed(0xC0FFEE)
 
     logging.info('load data start')
     train_lex, train_y = pkl.load( open('datas/kowiki_spacing_train.pkl', 'r') )
@@ -47,7 +47,8 @@ def main(args):
 
     context_window_size = 3
 
-    learning_rate = 0.001
+    logging.info('learning_rate: %f'%args.learning_rate)
+    learning_rate = args.learning_rate
     n = Network()
     n.layers.append( Fullconnect(vocsize, 256, Tanh.function, Tanh.derivative,  updater=GradientDescent(learning_rate)) )
     n.layers.append( Recurrent(256, 256, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
@@ -80,6 +81,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--params',         type=str, required=True)
     parser.add_argument('-n', '--samples',        type=int, default=100000 )
+    parser.add_argument('-l', '--learning-rate',  type=float, default=0.001)
     parser.add_argument('--log-filename',         type=str, default='')
     args = parser.parse_args()
 
