@@ -30,11 +30,24 @@ class Fullconnect(object):
         return np.dot( self.delta_a, self.W.T )
 
     def get_gradient(self):
-        return ( np.dot( np.array(self.x, ndmin=2).T, np.array(self.delta_a, ndmin=2)), self.delta_a.sum(axis=0) )
+        dW = np.dot( self.x.reshape( self.x.size/self.input_size, self.input_size ).T,
+                self.delta_a.reshape( self.delta_a.size/self.output_size, self.output_size ) )
+        db = self.delta_a.reshape( self.delta_a.size/self.output_size, self.output_size ).sum(axis=0)
+        return (dW, db)
 
     def update(self):
-        for param, gradient in zip([self.W, self.b], self.get_gradient()):
-            param = self.updater.update(param, gradient)
+        dW, db = self.get_gradient()
+        self.W = self.updater.update(self.W, dW)
+        self.b = self.updater.update(self.b, db)
+
+    def folk(self, shared=False):
+        _ = Fullconnect(self.input_size, self.output_size,
+                self.nonlinear_function, self.derivative_function,
+                updater=GradientDescent())
+        if shared:
+            _.W = self.W
+            _.b = self.b
+        return _
 
     def __test(self):
         '''
@@ -64,6 +77,7 @@ class Fullconnect(object):
         (3, 4)
         >>> db.shape
         (4,)
+        >>> l.update()
         >>> x = np.array([[[1, 2, 3], [2, 3, 4]]] * 3)
         >>> y = l.forward( x )
         >>> y.shape

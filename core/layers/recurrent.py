@@ -14,46 +14,68 @@ class Recurrent(Fullconnect):
             updater=GradientDescent() ):
         super(Recurrent, self).__init__(input_size+output_size, output_size, nonlinear_function, derivative_function, updater)
 
-    def init(self):
-        self.recurrent_output = None
-        self.recurrent_delta = None
-
     def forward(self, x):
-        if self.recurrent_output == None:
-            self.recurrent_output = np.zeros( (self.output_size, x.shape[1]) )
-        self.x = np.concatenate( [x, self.recurrent_output], axis=0 )
-        self.recurrent_output = super(Recurrent, self).forward( self.x )
-        return self.recurrent_output
+        time_splited_x = [_ for _ in np.split( x, x.shape[0] )]
+        self.times = len(time_splited_x)
+
+        shape = list(time_splited_x[0].shape)
+        shape[-1] = self.output_size
+
+        self.shared_layers = []
+        outputs = [np.array([])] * (self.times+1)
+        outputs[-1] = np.zeros(shape)
+        for t, splited in enumerate(time_splited_x):
+            layer = self.folk(shared=True)
+            outputs[t] = layer.forward( np.concatenate( [splited, outputs[t-1]], axis=-1 ) )
+            self.shared_layers.append( layer )
+
+        return np.concatenate( outputs[:self.times] )
 
     def backward(self, delta):
-        if self.recurrent_delta == None:
-            self.recurrent_delta = np.zeros_like( delta )
-        _, self.recurrent_delta = np.vsplit( super(Recurrent, self).backward(delta + self.recurrent_delta), [self.input_size-self.output_size] )
-        return _
+        time_splited_delta = [_ for _ in np.split( delta, delta.shape[0] )]
+        self.times = len(time_splited_delta)
+
+        shape = list(time_splited_delta[0].shape)
+        shape[-1] = self.output_size
+
+        deltas = [np.array([])] * (self.times+1)
+        deltas[-1] = np.zeros(shape)
+        outputs = []
+        for t, layer, splited in reversed( zip(range(self.times), self.shared_layers, time_splited_delta) ):
+            _, deltas[t] = np.split( layer.backward( splited+deltas[t+1] ), [self.input_size-self.output_size], axis=-1 )
+            outputs.append( _ )
+
+        return np.concatenate( outputs[:self.times] )
+
+    def update(self):
+        dW = np.zeros_like( self.W )
+        db = np.zeros_like( self.b )
+        for layer in self.shared_layers:
+            _ = layer.get_gradient()
+            dW += _[0]
+            db += _[1]
+        self.W = self.updater.update(self.W, dW/self.times)
+        self.b = self.updater.update(self.b, db/self.times)
 
     def __test(self):
         '''
         >>> np.random.seed(0xC0FFEE)
-        >>> x = np.array([[1],[2],[3]])
+        >>> x = np.array([[[1, 2, 3], [4, 5, 6]], [[1, 2, 3], [4, 5, 6]]])
+        >>> x.shape
+        (2, 2, 3)
         >>> l = Recurrent(3, 4)
         >>> y = l.forward( x )
         >>> y.shape
-        (4, 1)
-        >>> print ['%.1f'%_ for _ in np.asarray( y.T[0] )]
-        ['2.9', '0.7', '3.4', '0.0']
+        (2, 2, 4)
+        >>> print ['%.1f'%_ for _ in y[0][0]]
+        ['1.0', '2.2', '0.5', '-2.9']
         >>> np.array_equal( y, l.forward( x ) )
-        False
-        >>> np.array_equal( y, l.forward( x ) )
-        False
-        >>> l.init()
-        >>> x = np.array([[1, 2], [2, 3], [3, 4]])
-        >>> y = l.forward( x )
-        >>> y.shape
-        (4, 2)
-        >>> delta = np.array([[1,2], [1,2], [1,2], [1,2]])
+        True
+        >>> delta = np.array([[[1,1,1,1], [1,1,1,1]], [[0,0,0,0], [2,2,2,2]]])
         >>> d = l.backward( delta )
         >>> x.shape == d.shape
         True
+        >>> l.update()
         '''
         pass
 
