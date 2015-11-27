@@ -127,7 +127,7 @@ class Network(object):
         >>> x = np.array( [[1, 2, 1, 2,  5, 6, 5, 6,  5, 6, 5, 6],
         ...                [5, 4, 4, 5,  5, 4, 5, 4,  1, 2, 2, 1]] ).T
         >>>
-        >>> for epoch in range(0, 1001):
+        >>> for epoch in range(0, 301):
         ...     loss = n.train( x=x, target=x )
         ...     if epoch%100 == 0:
         ...         print 'epoch:%04d loss:%.2f'%(epoch, loss)
@@ -135,13 +135,6 @@ class Network(object):
         epoch:0100 loss:9.83
         epoch:0200 loss:1.79
         epoch:0300 loss:1.82
-        epoch:0400 loss:2.53
-        epoch:0500 loss:3.91
-        epoch:0600 loss:1.00
-        epoch:0700 loss:1.40
-        epoch:0800 loss:1.37
-        epoch:0900 loss:1.46
-        epoch:1000 loss:1.14
         '''
 
         pass
