@@ -5,7 +5,8 @@ class Softmax(object):
         pass
 
     def forward(self, x):
-        return np.exp(x) / sum( np.exp(x), 0 )
+        _ = np.exp(x)
+        return np.divide(_, np.array(_.sum( axis=-1 ), ndmin=2).T)
 
     def backward(self, y, target):
         return y - target
@@ -15,18 +16,18 @@ class Softmax(object):
 
     def __test(self):
         '''
-        >>> x = np.log( np.array([[1, 2, 12], [1, 6, 4]]) )
-        >>> t = np.array([[1, 0, 1], [0, 1, 0]])
+        >>> x = np.log( np.array([[1, 1], [12, 6], [3, 8]]) )
+        >>> t = np.array([[1, 0], [0, 1], [1, 0]])
         >>> f = Softmax()
         >>> y = f.forward( x )
         >>> print [['%.2f'%_ for _ in v] for v in y]
-        [['0.50', '0.25', '0.75'], ['0.50', '0.75', '0.25']]
+        [['0.50', '0.50'], ['0.67', '0.33'], ['0.27', '0.73']]
         >>> d = f.backward(y, t)
         >>> print [['%.2f'%_ for _ in v] for v in d]
-        [['-0.50', '0.25', '-0.25'], ['0.50', '-0.25', '0.25']]
+        [['-0.50', '0.50'], ['0.67', '-0.67'], ['-0.73', '0.73']]
         >>> l = f.loss(y, t)
         >>> print '%.2f'%l
-        1.27
+        3.09
         '''
         pass
 
