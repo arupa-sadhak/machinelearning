@@ -7,7 +7,7 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 
 from core.network import Network
-from core.layers import Fullconnect, Recurrent
+from core.layers import Fullconnect, Recurrent, BiRecurrent
 from core.activations import Softmax
 from core.nonlinears import Linear, ReLu, Tanh
 from core.updaters import GradientDescent
@@ -45,13 +45,14 @@ def main(args):
     max_iter = min(args.samples, nsentences)
     logging.info('vocsize:%d, nclasses:%d, nsentences:%d, samples:%d, max_iter:%d'%(vocsize, nclasses, nsentences, args.samples, max_iter))
 
-    context_window_size = 3
+    context_window_size = args.window_size
 
     logging.info('learning_rate: %f'%args.learning_rate)
     learning_rate = args.learning_rate
     n = Network()
     n.layers.append( Fullconnect(vocsize, 256, Tanh.function, Tanh.derivative,  updater=GradientDescent(learning_rate)) )
     n.layers.append( Recurrent(256, 256, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
+    n.layers.append( Fullconnect(256, 256, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
     n.layers.append( Fullconnect(256, nclasses, updater=GradientDescent(learning_rate)) )
     n.activation = Softmax()
 
@@ -60,28 +61,38 @@ def main(args):
         n.load_params( pkl.load(open(args.params, 'rb')) )
 
     logging.info('train start')
-    for epoch in xrange(0, 20):
+    for epoch in xrange(0, args.epoch):
         epoch_loss = 0
+        epoch_error_rate = 0
         for i in xrange( max_iter ):
             idx = random.randint(0, nsentences-1)
             cwords = contextwin(train_lex[idx], context_window_size)
             words, labels = onehotvector(cwords, vocsize, train_y[idx], nclasses)
 
             loss = n.train( words, labels ) / len(words) # sequence normalized loss
-            epoch_loss += loss
-            if i%10 == 0:
-                logging.info('[%.4f%%] epoch:%04d iter:%04d loss:%.2f'%((i+1)/float(max_iter), epoch, i, epoch_loss/(i+1)))
 
-        logging.info('epoch:%04d loss:%.2f'%(epoch, epoch_loss/max_iter))
+            y = np.zeros_like(labels)
+            for index1, index2 in enumerate([np.argmax(prediction) for prediction in n.y]):
+                y[index1][index2] = 1
+            error_rate = np.sum(np.absolute( y - labels )) / np.sum(y.shape)
+
+            epoch_loss += loss
+            epoch_error_rate += error_rate
+            if i%10 == 0 and i != 0:
+                logging.info('[%.4f%%] epoch:%04d iter:%04d loss:%.5f error-rate:%.5f'%((i+1)/float(max_iter), epoch, i, epoch_loss/(i+1), epoch_error_rate/(i+1)))
+
+        logging.info('epoch:%04d loss:%.5f, error-rate:%.5f'%(epoch, epoch_loss/max_iter, epoch_error_rate/max_iter))
         pkl.dump( n.dump_params(), open(args.params, 'wb') )
         logging.info('dump parameters at %s'%(args.params))
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
+    parser.add_argument('--window-size',          type=int,   default=1)
+    parser.add_argument('--epoch',                type=int,   default=10)
+    parser.add_argument('--learning-rate',        type=float, default=0.001)
     parser.add_argument('-p', '--params',         type=str, required=True)
     parser.add_argument('-n', '--samples',        type=int, default=100000 )
-    parser.add_argument('-l', '--learning-rate',  type=float, default=0.001)
     parser.add_argument('--log-filename',         type=str, default='')
     args = parser.parse_args()
 

@@ -37,71 +37,64 @@ def main(args):
     index2tables = {value:key for key, value in dicts['tables2idx'].iteritems()}
     index2labels = {value:key for key, value in dicts['labels2idx'].iteritems()}
 
-    train_lex, train_ne, train_y = train
-    test_lex, test_ne, test_y = test
+    datas = [
+            {'name':'train', 'x':train[0], 'y':train[2], 'size':len(train[0])},
+            {'name':'test',  'x':test[0],  'y':test[2], 'size':len(test[0])},
+            ]
+
     vocsize = len(dicts['words2idx']) + 1
     nclasses = len(dicts['labels2idx'])
-    nsentences = len(train_lex)
+    context_window_size = args.window_size
+    learning_rate = args.learning_rate
+    logging.info('vocsize:%d, nclasses:%d window-size:%d learning-rate:%.5f'%(vocsize, nclasses, context_window_size, learning_rate))
 
-    context_window_size = 7
-
-    learning_rate = 0.01
     n = Network()
     n.layers.append( Fullconnect(vocsize, 100, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
     n.layers.append( Recurrent(100, 100, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
+    n.layers.append( Fullconnect(100, 100, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
     n.layers.append( Fullconnect(100, nclasses, updater=GradientDescent(learning_rate)) )
     n.activation = Softmax()
 
-    for epoch in range(0, 11):
-        epoch_loss = 0
-        epoch_error_rate = 0
-        for i in xrange(nsentences):
-            idx = random.randint(0, nsentences-1)
-            cwords = contextwin(train_lex[i], context_window_size)
-            words, labels = onehotvector(cwords, vocsize, train_y[i], nclasses)
+    for epoch in xrange(args.epoch):
+        for data in datas:
+            epoch_loss = 0
+            epoch_error_rate = 0
+            for i in xrange(data['size']):
+                idx = random.randint(0, data['size']-1)
+                cwords = contextwin(data['x'][i], context_window_size)
+                words, labels = onehotvector(cwords, vocsize, data['y'][i], nclasses)
 
-            loss = n.train( words, labels ) / len(words) # sequence normalized loss
+                if data['name'] == 'train':
+                    loss = n.train( words, labels ) / len(words) # sequence normalized loss
+                    predictions = n.y
+                else:
+                    predictions = n.predict( words )
+                    loss = n.activation.loss( predictions, labels ) / len(words) # sequence normalized loss
 
-            y = np.zeros_like(labels)
-            for index1, index2 in enumerate([np.argmax(prediction) for prediction in n.y]):
-                y[index1][index2] = 1
-            error_rate = np.sum(np.absolute( y - labels )) / np.sum(y.shape)
+                y = np.zeros_like(labels)
+                for index1, index2 in enumerate([np.argmax(prediction) for prediction in predictions]):
+                    y[index1][index2] = 1
+                error_rate = np.sum(np.absolute( y - labels )) / np.sum(y.shape)
 
-            epoch_loss += loss
-            epoch_error_rate += error_rate
-            if i%1000 == 0 and i != 0:
-                logging.info( 'epoch:%04d iter:%04d loss:%.2f error-rate:%.5f'%(epoch, i, epoch_loss/(i+1), epoch_error_rate/(i+1)) )
+                epoch_loss += loss
+                epoch_error_rate += error_rate
+                if i%1000 == 0 and i != 0 and data['name'] == 'train':
+                    logging.info( 'epoch:%04d iter:%04d loss:%.5f error-rate:%.5f'%(epoch, i, epoch_loss/(i+1), epoch_error_rate/(i+1)) )
 
-        logging.info( '[train] epoch:%04d loss:%.2f error-rate:%.5f'%(epoch, epoch_loss/nsentences, epoch_error_rate/nsentences) )
-
-        epoch_loss = 0
-        epoch_error_rate = 0
-        for i in xrange( len(test_lex) ):
-            idx = i
-            cwords = contextwin(test_lex[idx], context_window_size)
-            words, labels = onehotvector(cwords, vocsize, test_y[i], nclasses)
-
-            _ = n.predict(words)
-
-            y = np.zeros_like(labels)
-            for index1, index2 in enumerate([np.argmax(prediction) for prediction in _]):
-                y[index1][index2] = 1
-            error_rate = np.sum(np.absolute( y - labels )) / np.sum(y.shape)
-
-            epoch_loss += loss
-            epoch_error_rate += error_rate
-        logging.info( '[test ] epoch:%04d loss:%.2f error-rate:%.5f'%(epoch, epoch_loss/len(test_lex), epoch_error_rate/len(test_lex)) )
+            logging.info( '[%5s] epoch:%04d loss:%.5f error-rate:%.5f'%(data['name'], epoch, epoch_loss/data['size'], epoch_error_rate/data['size']) )
 
     for i in range(20):
-        idx = random.randint(0, len(test_lex)-1)
-        cwords = contextwin(test_lex[idx], context_window_size)
+        idx = random.randint(0, datas[1]['size']-1)
+        x = datas[1]['x'][idx]
+        labels = datas[1]['y'][idx]
+
+        cwords = contextwin(datas[1]['x'][idx], context_window_size)
         words = onehotvector(cwords, vocsize)[0]
-        labels = test_y[idx]
         _ = n.predict(words)
 
         y = [np.argmax(prediction) for prediction in _]
 
-        print 'word:   ', ' '.join([index2words[_] for _ in test_lex[idx]])
+        print 'word:   ', ' '.join([index2words[_] for _ in x])
         print 'label:  ', ' '.join([index2labels[_] for _ in labels])
         print 'predict:', ' '.join([index2labels[_] for _ in y])
 
@@ -109,7 +102,10 @@ def main(args):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--log-filename',         type=str, default='')
+    parser.add_argument('--window-size',          type=int,   default=1)
+    parser.add_argument('--epoch',                type=int,   default=10)
+    parser.add_argument('--learning-rate',        type=float, default=0.01)
+    parser.add_argument('--log-filename',         type=str,   default='')
     args = parser.parse_args()
 
     if not args.log_filename:

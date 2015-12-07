@@ -7,7 +7,7 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 
 from core.network import Network
-from core.layers import Fullconnect, Recurrent
+from core.layers import Fullconnect, Recurrent, BiRecurrent
 from core.activations import Softmax
 from core.nonlinears import Linear, ReLu, Tanh
 from core.updaters import GradientDescent
@@ -43,13 +43,13 @@ def main(args):
     max_iter = min(args.samples, nsentences)
     logging.info('vocsize:%d, nclasses:%d, nsentences:%d, samples:%d, max_iter:%d'%(vocsize, nclasses, nsentences, args.samples, max_iter))
 
-    context_window_size = 3
+    context_window_size = args.window_size
 
-    learning_rate = 0.001
     n = Network()
-    n.layers.append( Fullconnect(vocsize, 256, Linear.function, Linear.derivative,  updater=GradientDescent(learning_rate)) )
-    n.layers.append( Recurrent(256, 256, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
-    n.layers.append( Fullconnect(256, nclasses, updater=GradientDescent(learning_rate)) )
+    n.layers.append( Fullconnect(vocsize, 256, Linear.function) )
+    n.layers.append( Recurrent(256, 256, Tanh.function) )
+    n.layers.append( Fullconnect(256, 256, ReLu.function) )
+    n.layers.append( Fullconnect(256, nclasses) )
     n.activation = Softmax()
 
     if not os.path.isfile( args.params ):
@@ -74,8 +74,9 @@ def main(args):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
+    parser.add_argument('--window-size',          type=int, default=1)
     parser.add_argument('-p', '--params',         type=str, required=True)
-    parser.add_argument('-n', '--samples',        type=int, default=10000 )
+    parser.add_argument('-n', '--samples',        type=int, default=1000 )
     parser.add_argument('--log-filename',         type=str, default='')
     args = parser.parse_args()
 
