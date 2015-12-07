@@ -15,7 +15,8 @@ class Network(object):
         _ = x
         for layer in self.layers:
             _ = layer.forward( _ )
-        return self.activation.forward( _ )
+        self.y = self.activation.forward( _ )
+        return self.y
 
     def train(self, x, target):
         y = self.predict( x )
