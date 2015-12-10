@@ -13,6 +13,12 @@ class Sigmoid(object):
     def loss(self, y, target):
         return - np.sum( np.log(y+self.eps) * target + np.log(1.-y+self.eps) * (1.0 - target) )
 
+    def error(self, y, taget):
+        batch_size = np.prod( y.shape )
+        y_dot = y.reshape( (batch_size, ) )
+        t_dot = target.reshape( (batch_size, ) )
+        return batch_size - np.sum( [(1.0 if t_dot[i] >= 0.5 and y_dot[i] >= 0.5 else 0.0) for i in range(batch_size)] )
+
     def __test(self):
         '''
         >>> x = np.log( np.array([[1, 2, 12], [1, 6, 4]]) )
