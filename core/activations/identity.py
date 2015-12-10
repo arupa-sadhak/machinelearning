@@ -13,6 +13,9 @@ class Identity(object):
     def loss(self, y, target):
         return np.sum( np.square(y - target) ) / 2.0
 
+    def error(self, y, target):
+        return self.loss(y, target)
+
     def __test(self):
         '''
         >>> x = np.log( np.array([[1, 2, 12], [1, 6, 4]]) )
