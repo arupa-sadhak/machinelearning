@@ -11,7 +11,8 @@ class ReLu(object):
 
     @staticmethod
     def derivative(x):
-        return np.array( [[(1 if _>0 else 0) for _ in v] for v in x] )
+        _ = x.reshape( (np.prod(x.shape), ) )
+        return np.array( [(1.0 if v>0 else 0.0) for v in _] ).reshape( x.shape )
 
     def __test(self):
         '''

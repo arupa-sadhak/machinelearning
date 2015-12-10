@@ -54,8 +54,8 @@ class Recurrent(Fullconnect):
             _ = layer.get_gradient()
             dW += _[0]
             db += _[1]
-        self.W = self.updater.update(self.W, dW/self.times)
-        self.b = self.updater.update(self.b, db/self.times)
+        self.W = self.updater.update(self.W, dW)
+        self.b = self.updater.update(self.b, db)
 
     def __test(self):
         '''
