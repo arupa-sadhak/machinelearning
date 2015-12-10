@@ -42,19 +42,18 @@ def main(args):
     vocsize = len(words2idx) + 1
     nclasses = 2
     nsentences = len(train_lex)
-    max_iter = min(args.samples, nsentences)
-    logging.info('vocsize:%d, nclasses:%d, nsentences:%d, samples:%d, max_iter:%d'%(vocsize, nclasses, nsentences, args.samples, max_iter))
 
     context_window_size = args.window_size
-
-    logging.info('learning_rate: %f'%args.learning_rate)
+    minibatch = args.minibatch
     learning_rate = args.learning_rate
+    logging.info('vocsize:%d, nclasses:%d, window-size:%d, minibatch:%d, learning-rate:%.5f'%(vocsize, nclasses, context_window_size, minibatch, learning_rate))
+
     n = Network()
     n.layers.append( Fullconnect(vocsize, 256, Tanh.function, Tanh.derivative,  updater=GradientDescent(learning_rate)) )
-    n.layers.append( Recurrent(256, 256, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
+    n.layers.append( Recurrent(256, 256, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
     n.layers.append( Fullconnect(256, 256, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
     n.layers.append( Fullconnect(256, nclasses, updater=GradientDescent(learning_rate)) )
-    n.activation = Softmax()
+    n.activation = Softmax(is_zero_pad=True)
 
     if os.path.isfile( args.params ):
         logging.info('load parameters from %s'%args.params)
@@ -64,24 +63,35 @@ def main(args):
     for epoch in xrange(0, args.epoch):
         epoch_loss = 0
         epoch_error_rate = 0
-        for i in xrange( max_iter ):
-            idx = random.randint(0, nsentences-1)
-            cwords = contextwin(train_lex[idx], context_window_size)
-            words, labels = onehotvector(cwords, vocsize, train_y[idx], nclasses)
+        max_iterations = min(args.samples, nsentences) / minibatch
+        for i in xrange( max_iterations ):
+            idxs = [random.randint(0, nsentences-1) for _ in range(minibatch)]
+            cwords = [contextwin(train_lex[idx], context_window_size) for idx in idxs]
+            words_labels = [onehotvector(cword, vocsize, train_y[idx], nclasses) for idx, cword in zip(idxs, cwords)]
 
-            loss = n.train( words, labels ) / len(words) # sequence normalized loss
+            words = [word for word, label in words_labels]
+            labels = [label for word, label in words_labels]
 
-            y = np.zeros_like(labels)
-            for index1, index2 in enumerate([np.argmax(prediction) for prediction in n.y]):
-                y[index1][index2] = 1
-            error_rate = np.sum(np.absolute( y - labels )) / np.sum(y.shape)
+            # zero padding for minibatch
+            max_size_of_sequence = max( [_.shape[0] for _ in words] )
+            for k, (word, label) in enumerate(zip(words, labels)):
+                size_of_sequence = word.shape[0]
+                words[k]  = np.pad(word,  ((0, max_size_of_sequence-size_of_sequence), (0, 0)), mode='constant')
+                labels[k] = np.pad(label, ((0, max_size_of_sequence-size_of_sequence), (0, 0)), mode='constant')
+
+            words  = np.swapaxes( np.array(words),  0, 1 )
+            labels = np.swapaxes( np.array(labels), 0, 1 )
+
+            loss = n.train( words, labels ) / (max_size_of_sequence * minibatch) # sequence normalized loss
+            predictions = n.y
+            error_rate = n.activation.error( predictions, labels ) / (max_size_of_sequence * minibatch)
 
             epoch_loss += loss
             epoch_error_rate += error_rate
             if i%10 == 0 and i != 0:
-                logging.info('[%.4f%%] epoch:%04d iter:%04d loss:%.5f error-rate:%.5f'%((i+1)/float(max_iter), epoch, i, epoch_loss/(i+1), epoch_error_rate/(i+1)))
+                logging.info('[%.4f%%] epoch:%04d iter:%04d loss:%.5f error-rate:%.5f'%((i+1)/float(max_iterations), epoch, i, epoch_loss/(i+1), epoch_error_rate/(i+1)))
 
-        logging.info('epoch:%04d loss:%.5f, error-rate:%.5f'%(epoch, epoch_loss/max_iter, epoch_error_rate/max_iter))
+        logging.info('epoch:%04d loss:%.5f, error-rate:%.5f'%(epoch, epoch_loss/max_iterations, epoch_error_rate/max_iterations))
         pkl.dump( n.dump_params(), open(args.params, 'wb') )
         logging.info('dump parameters at %s'%(args.params))
 
@@ -90,10 +100,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--window-size',          type=int,   default=1)
     parser.add_argument('--epoch',                type=int,   default=10)
-    parser.add_argument('--learning-rate',        type=float, default=0.001)
-    parser.add_argument('-p', '--params',         type=str, required=True)
-    parser.add_argument('-n', '--samples',        type=int, default=100000 )
-    parser.add_argument('--log-filename',         type=str, default='')
+    parser.add_argument('--minibatch',            type=int,   default=10)
+    parser.add_argument('--learning-rate',        type=float, default=0.00001)
+    parser.add_argument('-p', '--params',         type=str,   required=True)
+    parser.add_argument('-n', '--samples',        type=int,   default=100000 )
+    parser.add_argument('--log-filename',         type=str,   default='')
     args = parser.parse_args()
 
     if not args.log_filename:

@@ -51,7 +51,7 @@ def main(args):
 
     n = Network()
     n.layers.append( Fullconnect(vocsize, 100, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
-    n.layers.append( Recurrent(100, 100, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
+    n.layers.append( Recurrent(100, 100, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
     n.layers.append( Fullconnect(100, 100, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
     n.layers.append( Fullconnect(100, nclasses, updater=GradientDescent(learning_rate)) )
     n.activation = Softmax(is_zero_pad=True)
@@ -62,7 +62,10 @@ def main(args):
             epoch_error_rate = 0
             max_iteration = data['size']/minibatch
             for i in xrange(max_iteration):
-                idxs = [random.randint(0, data['size']-1) for _ in range(minibatch)]
+                if data['name'] == 'train':
+                    idxs = [random.randint(0, data['size']-1) for _ in range(minibatch)]
+                else:
+                    idxs = [i*minibatch+k for k in range(minibatch)]
                 cwords = [contextwin(data['x'][idx], context_window_size) for idx in idxs]
                 words_labels = [onehotvector(cword, vocsize, data['y'][idx], nclasses) for idx, cword in zip(idxs, cwords)]
 
