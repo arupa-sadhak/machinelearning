@@ -1,3 +1,3 @@
 from fullconnect import Fullconnect
+from dropout import Dropout
 from recurrent import Recurrent
-from bi_recurrent import BiRecurrent
