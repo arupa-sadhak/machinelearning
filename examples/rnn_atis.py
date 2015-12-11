@@ -7,7 +7,7 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 
 from core.network import Network
-from core.layers import Fullconnect, Recurrent, BiRecurrent
+from core.layers import Fullconnect, Dropout, Recurrent
 from core.activations import Softmax, Sigmoid
 from core.nonlinears import Linear, ReLu, Tanh
 from core.updaters import GradientDescent
@@ -50,14 +50,22 @@ def main(args):
     logging.info('vocsize:%d, nclasses:%d, window-size:%d, minibatch:%d, learning-rate:%.5f'%(vocsize, nclasses, context_window_size, minibatch, learning_rate))
 
     n = Network()
-    n.layers.append( Fullconnect(vocsize, 100, Tanh.function, Tanh.derivative, updater=GradientDescent(learning_rate)) )
-    n.layers.append( Recurrent(100, 100, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
-    n.layers.append( Fullconnect(100, 100, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
-    n.layers.append( Fullconnect(100, nclasses, updater=GradientDescent(learning_rate)) )
+    n.layers.append( Fullconnect(vocsize, 100,                                     Tanh.function, Tanh.derivative,
+        updater=GradientDescent(learning_rate)) )
+    n.layers.append( Recurrent(n.layers[-1].output_size, n.layers[-1].output_size, Tanh.function, Tanh.derivative,
+        updater=GradientDescent(learning_rate)) )
+    n.layers.append( Dropout(n.layers[-1].output_size, 200, drop_ratio=0.5,        ReLu.function, ReLu.derivative,
+        updater=GradientDescent(learning_rate)) )
+    n.layers.append( Fullconnect(n.layers[-1].output_size, nclasses,
+        updater=GradientDescent(learning_rate)) )
     n.activation = Softmax(is_zero_pad=True)
 
     for epoch in xrange(args.epoch):
         for data in datas:
+            for l, layer in enumerate(n.layers):
+                if 'Dropout' == type( layer ).__name__:
+                    n.layers[l].is_testing = data['name'] == 'test'
+
             epoch_loss = 0
             epoch_error_rate = 0
             max_iteration = data['size']/minibatch
@@ -117,9 +125,9 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--window-size',          type=int,   default=1)
-    parser.add_argument('--epoch',                type=int,   default=10)
+    parser.add_argument('--epoch',                type=int,   default=30)
     parser.add_argument('--minibatch',            type=int,   default=10)
-    parser.add_argument('--learning-rate',        type=float, default=0.001)
+    parser.add_argument('--learning-rate',        type=float, default=0.002)
     parser.add_argument('--log-filename',         type=str,   default='')
     args = parser.parse_args()
 

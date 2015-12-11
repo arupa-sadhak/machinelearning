@@ -19,9 +19,9 @@ class Dropout(Fullconnect):
     def forward(self, x):
         y = super(Dropout, self).forward( x )
         if self.is_testing:
-            return y
+            return y * self.drop_ratio
         self.drop_map = np.array( [1.0 if v>=self.drop_ratio else 0.0 for v in np.random.uniform(0, 1, np.prod( y.shape ))] ).reshape( y.shape )
-        return np.multiply( y, self.drop_map )
+        return np.multiply(y, self.drop_map)
 
     def backward(self, delta):
         return super(Dropout, self).backward( np.multiply(delta, self.drop_map) )
@@ -47,6 +47,8 @@ class Dropout(Fullconnect):
         >>> x.shape == d.shape
         True
         >>> l.update()
+        >>> type( l ).__name__
+        'Dropout'
         '''
         pass
 
