@@ -7,7 +7,7 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 
 from core.network import Network
-from core.layers import Fullconnect, Recurrent, BiRecurrent
+from core.layers import Fullconnect, Recurrent
 from core.activations import Softmax
 from core.nonlinears import Linear, ReLu, Tanh
 from core.updaters import GradientDescent

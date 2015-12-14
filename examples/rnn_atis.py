@@ -62,6 +62,7 @@ def main(args):
         updater=GradientDescent(learning_rate)) )
     n.activation = Softmax(is_zero_pad=True)
 
+    minimum_validation_error_rate = 1.0
     for epoch in xrange(args.epoch):
         for data in datas:
             for l, layer in enumerate(n.layers):
@@ -106,7 +107,11 @@ def main(args):
                     logging.info( 'epoch:%04d iter:%04d loss:%.5f error-rate:%.5f'%(epoch, i, epoch_loss/(i+1), epoch_error_rate/(i+1)) )
 
             logging.info( '[%5s] epoch:%04d loss:%.5f error-rate:%.5f'%(data['name'], epoch, epoch_loss/max_iteration, epoch_error_rate/max_iteration) )
-
+            if args.params and data['name'] == 'test' and minimum_validation_error_rate > epoch_error_rate/max_iteration:
+                minimum_validation_error_rate = epoch_error_rate/max_iteration
+                fname = args.params + '_min_error.pkl'
+                pkl.dump( n.dump_params(), open(fname, 'wb') )
+                logging.info('dump parameters at %s'%(fname))
 
     # prediction setup for evaluation
     for l, layer in enumerate(n.layers):
@@ -135,8 +140,9 @@ def main(args):
     logging.info('evaluation result: %s'%(str(rv)))
 
     if args.params:
-        pkl.dump( n.dump_params(), open(args.params, 'wb') )
-        logging.info('dump parameters at %s'%(args.params))
+        fname = args.params + '_last.pkl'
+        pkl.dump( n.dump_params(), open(fname, 'wb') )
+        logging.info('dump parameters at %s'%(fname))
 
     '''
     for i in range(20):
