@@ -65,9 +65,10 @@ def main(args):
         epoch_error_rate = 0
         max_iterations = min(args.samples, nsentences) / minibatch
         for i in xrange( max_iterations ):
+            max_size_of_sequence = 100
             idxs = [random.randint(0, nsentences-1) for _ in range(minibatch)]
-            cwords = [contextwin(train_lex[idx], context_window_size) for idx in idxs]
-            words_labels = [onehotvector(cword, vocsize, train_y[idx], nclasses) for idx, cword in zip(idxs, cwords)]
+            cwords = [contextwin(train_lex[idx][:max_size_of_sequence], context_window_size) for idx in idxs]
+            words_labels = [onehotvector(cword, vocsize, train_y[idx][:max_size_of_sequence], nclasses) for idx, cword in zip(idxs, cwords)]
 
             words = [word for word, label in words_labels]
             labels = [label for word, label in words_labels]
@@ -101,7 +102,7 @@ if __name__ == '__main__':
     parser.add_argument('--window-size',          type=int,   default=1)
     parser.add_argument('--epoch',                type=int,   default=10)
     parser.add_argument('--minibatch',            type=int,   default=10)
-    parser.add_argument('--learning-rate',        type=float, default=0.00001)
+    parser.add_argument('--learning-rate',        type=float, default=0.0001)
     parser.add_argument('-p', '--params',         type=str,   required=True)
     parser.add_argument('-n', '--samples',        type=int,   default=100000 )
     parser.add_argument('--log-filename',         type=str,   default='')
