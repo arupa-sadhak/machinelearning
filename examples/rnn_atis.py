@@ -12,6 +12,8 @@ from core.activations import Softmax, Sigmoid
 from core.nonlinears import Linear, ReLu, Tanh
 from core.updaters import GradientDescent
 
+from accuracy import conlleval
+
 def contextwin(l, win):
     l = list(l)
     lpadded = win // 2 * [-1] + l + win // 2 * [-1]
@@ -52,9 +54,9 @@ def main(args):
     n = Network()
     n.layers.append( Fullconnect(vocsize, 100,                                     Tanh.function, Tanh.derivative,
         updater=GradientDescent(learning_rate)) )
-    n.layers.append( Recurrent(n.layers[-1].output_size, n.layers[-1].output_size, Tanh.function, Tanh.derivative,
+    n.layers.append( Recurrent(n.layers[-1].output_size, n.layers[-1].output_size, ReLu.function, ReLu.derivative,
         updater=GradientDescent(learning_rate)) )
-    n.layers.append( Dropout(n.layers[-1].output_size, 200, drop_ratio=0.5,        ReLu.function, ReLu.derivative,
+    n.layers.append( Fullconnect(n.layers[-1].output_size, 200,                    ReLu.function, ReLu.derivative,
         updater=GradientDescent(learning_rate)) )
     n.layers.append( Fullconnect(n.layers[-1].output_size, nclasses,
         updater=GradientDescent(learning_rate)) )
@@ -105,6 +107,38 @@ def main(args):
 
             logging.info( '[%5s] epoch:%04d loss:%.5f error-rate:%.5f'%(data['name'], epoch, epoch_loss/max_iteration, epoch_error_rate/max_iteration) )
 
+
+    # prediction setup for evaluation
+    for l, layer in enumerate(n.layers):
+        if 'Dropout' == type( layer ).__name__:
+            n.layers[l].is_testing = data['name'] == 'test'
+
+    data = datas[1]
+    max_iteration = data['size']
+    results = {'p':[], 'g':[], 'w':[]}
+    for i in range(max_iteration):
+        idx = i
+        x = data['x'][idx]
+        labels = data['y'][idx]
+
+        cwords = contextwin(datas[1]['x'][idx], context_window_size)
+        words = onehotvector(cwords, vocsize)[0]
+        _ = n.predict(words)
+
+        y = [np.argmax(prediction) for prediction in _]
+
+        results['p'].append( [index2labels[_] for _ in y] )
+        results['g'].append( [index2labels[_] for _ in labels] )
+        results['w'].append( [index2words[_] for _ in x] )
+
+    rv = conlleval(results['p'], results['g'], results['w'], 'atis_test_file.tmp')
+    logging.info('evaluation result: %s'%(str(rv)))
+
+    if args.params:
+        pkl.dump( n.dump_params(), open(args.params, 'wb') )
+        logging.info('dump parameters at %s'%(args.params))
+
+    '''
     for i in range(20):
         idx = random.randint(0, datas[1]['size']-1)
         x = datas[1]['x'][idx]
@@ -117,8 +151,11 @@ def main(args):
         y = [np.argmax(prediction) for prediction in _]
 
         print 'word:   ', ' '.join([index2words[_] for _ in x])
+        print 'table:  ', ' '.join([index2tables[_] for _ in labels])
         print 'label:  ', ' '.join([index2labels[_] for _ in labels])
         print 'predict:', ' '.join([index2labels[_] for _ in y])
+    '''
+
 
 
 if __name__ == '__main__':
@@ -128,6 +165,7 @@ if __name__ == '__main__':
     parser.add_argument('--epoch',                type=int,   default=30)
     parser.add_argument('--minibatch',            type=int,   default=10)
     parser.add_argument('--learning-rate',        type=float, default=0.002)
+    parser.add_argument('-p', '--params',         type=str,   default='')
     parser.add_argument('--log-filename',         type=str,   default='')
     args = parser.parse_args()
 
