@@ -14,29 +14,29 @@
 
 ## Features
 * Network
-  * [Feedforward Network](https://github.com/wbaek/machinelearning/blob/master/core/network.py)
-  * [Autoencoder Network](https://github.com/wbaek/machinelearning/blob/master/README.md#auto-encoder)
-  * [Recurrent Network](https://github.com/wbaek/machinelearning/blob/master/README.md#recurrent-network)
+  * [Feedforward Network](core/network.py)
+  * [Autoencoder Network](README.md#auto-encoder)
+  * [Recurrent Network](README.md#recurrent-network)
 * Layer
-  * [Fullconnect Layer](https://github.com/wbaek/machinelearning/blob/master/core/layers/fullconnect.py)
-  * [Recurrent Layer](https://github.com/wbaek/machinelearning/blob/master/core/layers/recurrent.py)
+  * [Fullconnect Layer](core/layers/fullconnect.py)
+  * [Recurrent Layer](core/layers/recurrent.py)
   * ~~Dropout Layer~~
   * ~~Convolution Layer~~
 * Nonlinear Function
-  * [Linear](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/linear.py)
-  * [ReLu](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/relu.py)
-  * [Tanh](https://github.com/wbaek/machinelearning/blob/master/core/nonlinears/tanh.py)
+  * [Linear](core/nonlinears/linear.py)
+  * [ReLu](core/nonlinears/relu.py)
+  * [Tanh](core/nonlinears/tanh.py)
 * Activation \w Negative Log Likelihood Loss
-  * [Softmax \w cross-entropy error](https://github.com/wbaek/machinelearning/blob/master/core/activations/softmax.py)
-  * [Sigmoid \w cross-entropy error](https://github.com/wbaek/machinelearning/blob/master/core/activations/sigmoid.py)
-  * [Identity \w sum-of-squre error](https://github.com/wbaek/machinelearning/blob/master/core/activations/identity.py)
+  * [Softmax \w cross-entropy error](core/activations/softmax.py)
+  * [Sigmoid \w cross-entropy error](core/activations/sigmoid.py)
+  * [Identity \w sum-of-squre error](core/activations/identity.py)
 * Updater
   * ~~None~~
-  * Vanila [Gradient Descent](https://github.com/wbaek/machinelearning/blob/master/core/updaters/gradient_descent.py)
+  * Vanila [Gradient Descent](core/updaters/gradient_descent.py)
   * ~~Momentum~~
   * ~~AdaGradient~~
 * Initializer
-  * [Xavier](https://github.com/wbaek/machinelearning/blob/master/core/layers/fullconnect.py#L17) (implemented in Layer init function)
+  * [Xavier](core/layers/fullconnect.py#L17) (implemented in Layer init function)
   * ~~Kaiming Initializer~~
 
 ## Requirements
