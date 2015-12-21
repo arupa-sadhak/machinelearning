@@ -12,6 +12,7 @@ addons:
       - liblapack-dev
       - gfortran
 before_install:
+  - sudo apt-get install -qq python-numpy python-scipy python-sklearn
   - pip install -U pip
 
 install:
