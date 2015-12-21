@@ -51,16 +51,25 @@ def main(args):
     minibatch = args.minibatch
     logging.info('vocsize:%d, nclasses:%d, window-size:%d, minibatch:%d, learning-rate:%.5f'%(vocsize, nclasses, context_window_size, minibatch, learning_rate))
 
+    model_script = '''
+def model(learning_rate=0.0001):
     n = Network()
-    n.layers.append( Fullconnect(vocsize, 100,                                     Tanh.function, Tanh.derivative,
+    # word embedding layer
+    n.layers.append( Fullconnect(573, 256,                       Tanh.function, Tanh.derivative,
         updater=GradientDescent(learning_rate)) )
-    n.layers.append( Recurrent(n.layers[-1].output_size, n.layers[-1].output_size, ReLu.function, ReLu.derivative,
+    # recurrent layer
+    n.layers.append( Recurrent(n.layers[-1].output_size, 256,    ReLu.function, ReLu.derivative,
         updater=GradientDescent(learning_rate)) )
-    n.layers.append( Fullconnect(n.layers[-1].output_size, 200,                    ReLu.function, ReLu.derivative,
+    n.layers.append( Dropout(n.layers[-1].output_size, 256, 0.5, ReLu.function, ReLu.derivative,
         updater=GradientDescent(learning_rate)) )
-    n.layers.append( Fullconnect(n.layers[-1].output_size, nclasses,
+    n.layers.append( Fullconnect(n.layers[-1].output_size, 127,
         updater=GradientDescent(learning_rate)) )
     n.activation = Softmax(is_zero_pad=True)
+    return n
+    '''
+    exec( model_script )
+    n = model( learning_rate )
+
 
     minimum_validation_error_rate = 1.0
     for epoch in xrange(args.epoch):
@@ -167,10 +176,10 @@ def main(args):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--window-size',          type=int,   default=1)
+    parser.add_argument('--window-size',          type=int,   default=3)
     parser.add_argument('--epoch',                type=int,   default=30)
     parser.add_argument('--minibatch',            type=int,   default=10)
-    parser.add_argument('--learning-rate',        type=float, default=0.002)
+    parser.add_argument('--learning-rate',        type=float, default=0.003)
     parser.add_argument('-p', '--params',         type=str,   default='')
     parser.add_argument('--log-filename',         type=str,   default='')
     args = parser.parse_args()
