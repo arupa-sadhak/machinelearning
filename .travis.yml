@@ -8,11 +8,11 @@ notifications:
 virtualenv:
   system_site_packages: true
 
-before_install:
- - sudo apt-get install -qq python-numpy python-scipy
+#before_install:
+# - sudo apt-get install -qq python-numpy python-scipy
 
 install:
-  - pip install scikit-learn
+  - pip install numpy scipy scikit-learn
 
 # command to run tests
 script: make test
