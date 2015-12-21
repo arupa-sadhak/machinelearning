@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 from core.network import Network
 from core.layers import Fullconnect, Dropout, Recurrent
 from core.activations import Softmax, Sigmoid
-from core.nonlinears import Linear, ReLu, Tanh
+from core.nonlinears import Linear, ReLU, Tanh
 from core.updaters import GradientDescent
 
 from accuracy import conlleval
@@ -52,8 +52,8 @@ def main(args):
     # word embedding layer
     n.layers.append( Fullconnect(vocsize, 256,                   Tanh.function, Tanh.derivative) )
     # recurrent layer
-    n.layers.append( Recurrent(n.layers[-1].output_size, 256,    ReLu.function, ReLu.derivative) )
-    n.layers.append( Dropout(n.layers[-1].output_size, 256, 0.5,  ReLu.function, ReLu.derivative) )
+    n.layers.append( Recurrent(n.layers[-1].output_size, 256,    ReLU.function, ReLU.derivative) )
+    n.layers.append( Dropout(n.layers[-1].output_size, 256, 0.5,  ReLU.function, ReLU.derivative) )
     n.layers.append( Fullconnect(n.layers[-1].output_size, nclasses) )
     n.activation = Softmax(is_zero_pad=True)
 

@@ -24,7 +24,7 @@
   * ~~Convolution Layer~~
 * Nonlinear Function
   * [Linear](core/nonlinears/linear.py)
-  * [ReLu](core/nonlinears/relu.py)
+  * [ReLU](core/nonlinears/relu.py)
   * [Tanh](core/nonlinears/tanh.py)
 * Activation \w Negative Log Likelihood Loss
   * [Softmax \w cross-entropy error](core/activations/softmax.py)
@@ -51,13 +51,13 @@ pip install -r requirements.txt
 ```python
 >>> from core.network import Network
 >>> from core.layers import Fullconnect
->>> from core.nonlinears import ReLu
+>>> from core.nonlinears import ReLU
 >>> from core.activations import Softmax
 >>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
 >>> 
 >>> n = Network()
->>> n.layers.append( Fullconnect(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Fullconnect(input_size=2, output_size=10, ReLU.function, ReLU.derivative, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.layers.append( Fullconnect(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.activation = Softmax()
 >>> 
@@ -83,13 +83,13 @@ epoch:0015 loss:0.18
 ```python
 >>> from core.network import Network
 >>> from core.layers import Fullconnect
->>> from core.nonlinears import ReLu
+>>> from core.nonlinears import ReLU
 >>> from core.activations import Sigmoid
 >>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
 >>> 
 >>> n = Network()
->>> n.layers.append( Fullconnect(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Fullconnect(input_size=2, output_size=10, ReLU.function, ReLU.derivative, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.layers.append( Fullconnect(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.activation = Sigmoid()
 >>> 
@@ -114,13 +114,13 @@ epoch:0015 loss:3.97
 ```python
 >>> from core.network import Network
 >>> from core.layers import Fullconnect
->>> from core.nonlinears import ReLu
+>>> from core.nonlinears import ReLU
 >>> from core.activations import Identity
 >>> from core.updaters import GradientDescent
 >>> np.random.seed(0xC0FFEE)
 >>> 
 >>> n = Network()
->>> n.layers.append( Fullconnect(input_size=2, output_size=10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate=0.01)) )
+>>> n.layers.append( Fullconnect(input_size=2, output_size=10, ReLU.function, ReLU.derivative, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.layers.append( Fullconnect(input_size=10, output_size=2, updater=GradientDescent(learning_rate=0.01)) )
 >>> n.activation = Identity()
 >>> 
@@ -145,7 +145,7 @@ epoch:0015 loss:2.00
 ```python
 >>> from core.network import Network
 >>> from core.layers import Fullconnect
->>> from core.nonlinears import ReLu
+>>> from core.nonlinears import ReLU
 >>> from core.activations import Identity
 >>> from core.updaters import GradientDescent
 >>> from core.updaters import NotUpdate
@@ -187,7 +187,7 @@ epoch:0900 loss:1.95
 >>> from core.network import Network
 >>> from core.layers import Fullconnect, Recurrent
 >>> from core.activations import Softmax
->>> from core.nonlinears import Linear, ReLu, Tanh
+>>> from core.nonlinears import Linear, ReLU, Tanh
 >>> from core.updaters import GradientDescent
 >>> 
 >>> np.random.seed(0xC0FFEE)

@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 from core.network import Network
 from core.layers import Fullconnect, Recurrent
 from core.activations import Softmax
-from core.nonlinears import Linear, ReLu, Tanh
+from core.nonlinears import Linear, ReLU, Tanh
 from core.updaters import GradientDescent
 
 def contextwin(l, win):
@@ -50,8 +50,8 @@ def main(args):
 
     n = Network()
     n.layers.append( Fullconnect(vocsize, 256, Tanh.function, Tanh.derivative,  updater=GradientDescent(learning_rate)) )
-    n.layers.append( Recurrent(256, 256, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
-    n.layers.append( Fullconnect(256, 256, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
+    n.layers.append( Recurrent(256, 256, ReLU.function, ReLU.derivative, updater=GradientDescent(learning_rate)) )
+    n.layers.append( Fullconnect(256, 256, ReLU.function, ReLU.derivative, updater=GradientDescent(learning_rate)) )
     n.layers.append( Fullconnect(256, nclasses, updater=GradientDescent(learning_rate)) )
     n.activation = Softmax(is_zero_pad=True)
 

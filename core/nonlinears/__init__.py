@@ -1,3 +1,3 @@
 from linear import Linear
-from relu import ReLu
+from relu import ReLU
 from tanh import Tanh

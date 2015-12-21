@@ -1,6 +1,6 @@
 import numpy as np
 
-class ReLu(object):
+class ReLU(object):
     def __init__(self):
         pass
 
@@ -17,11 +17,11 @@ class ReLu(object):
     def __test(self):
         '''
         >>> x = np.array( [[-1, 3, -1, 1, 2], [1, -1, 0.5, -1, -2]] )
-        >>> f = ReLu.function
+        >>> f = ReLU.function
         >>> y = f( x )
         >>> [['%.1f'%_ for _ in v] for v in y]
         [['0.0', '3.0', '0.0', '1.0', '2.0'], ['1.0', '0.0', '0.5', '0.0', '0.0']]
-        >>> d = ReLu.derivative
+        >>> d = ReLU.derivative
         >>> y = d( x )
         >>> [['%.1f'%_ for _ in v] for v in y]
         [['0.0', '1.0', '0.0', '1.0', '1.0'], ['1.0', '0.0', '1.0', '0.0', '0.0']]

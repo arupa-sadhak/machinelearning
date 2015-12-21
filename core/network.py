@@ -38,7 +38,7 @@ class Network(object):
     def __test(self):
         '''
         >>> from layers import Fullconnect
-        >>> from nonlinears import ReLu, Tanh
+        >>> from nonlinears import ReLU, Tanh
         >>> from activations import Softmax, Sigmoid, Identity
         >>> from updaters import GradientDescent, NotUpdate
         >>>
@@ -47,7 +47,7 @@ class Network(object):
         >>>
         >>> # Multiclass classification
         >>> n = Network()
-        >>> n.layers.append( Fullconnect(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
+        >>> n.layers.append( Fullconnect(2, 10, ReLU.function, ReLU.derivative, updater=GradientDescent(learning_rate)) )
         >>> n.layers.append( Fullconnect(10, 2, updater=GradientDescent(learning_rate)) )
         >>> n.activation = Softmax()
         >>>
@@ -71,7 +71,7 @@ class Network(object):
         >>>
         >>> # Multiple-class classification
         >>> n = Network()
-        >>> n.layers.append( Fullconnect(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
+        >>> n.layers.append( Fullconnect(2, 10, ReLU.function, ReLU.derivative, updater=GradientDescent(learning_rate)) )
         >>> n.layers.append( Fullconnect(10, 2, updater=GradientDescent(learning_rate)) )
         >>> n.activation = Sigmoid()
         >>>
@@ -93,7 +93,7 @@ class Network(object):
         >>>
         >>> # Regression
         >>> n = Network()
-        >>> n.layers.append( Fullconnect(2, 10, ReLu.function, ReLu.derivative, updater=GradientDescent(learning_rate)) )
+        >>> n.layers.append( Fullconnect(2, 10, ReLU.function, ReLU.derivative, updater=GradientDescent(learning_rate)) )
         >>> n.layers.append( Fullconnect(10, 2, updater=GradientDescent(learning_rate)) )
         >>> n.activation = Identity()
         >>>
