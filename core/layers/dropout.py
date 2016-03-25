@@ -17,13 +17,10 @@ class Dropout(Fullconnect):
         self.is_testing = False
 
     def forward(self, x):
-        self.x = np.copy(x)
-        a = np.dot( self.x, self.W ) + self.b
-        if self.is_testing:
-            self.a = a * self.drop_ratio
-        else:
+        a = super(Dropout, self).forward(x)
+        if not self.is_testing:
             self.drop_map = np.array( [1.0 if v>=self.drop_ratio else 0.0 for v in np.random.uniform(0, 1, np.prod( a.shape ))] ).reshape( a.shape )
-            self.a = np.multiply(a, self.drop_map)
+            self.a = np.multiply(a, self.drop_map) * (1.0 / self.drop_ratio)
         return self.nonlinear_function( self.a )
 
     def backward(self, delta):
@@ -40,7 +37,7 @@ class Dropout(Fullconnect):
         >>> y.shape
         (2, 2, 4)
         >>> print ['%.1f'%_ for _ in y[0][0]]
-        ['0.0', '2.8', '0.6', '-3.6']
+        ['0.0', '5.5', '1.2', '-7.2']
         >>> np.array_equal( y, l.forward( x ) )
         False
         >>> delta = np.array([[[1,1,1,1], [1,1,1,1]], [[0,0,0,0], [2,2,2,2]]])

@@ -23,7 +23,7 @@
 * Layer
   * [Fullconnect Layer](core/layers/fullconnect.py)
   * [Recurrent Layer](core/layers/recurrent.py)
-  * ~~Dropout Layer~~
+  * [Dropout Layer](core/Layer/dropout.py)
   * ~~Convolution Layer~~
 * Nonlinear Function
   * [Linear](core/nonlinears/linear.py)
