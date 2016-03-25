@@ -13,7 +13,8 @@ class NaivBayes(object):
                 self.num_classes, str(self.priors), str(self.means), str(self.covs) )
 
     def predict(self, x):
-        _ = np.array( [self.priors[i] * multivariate_normal.pdf(x, mean=m, cov=np.diag(s), allow_singular=True) for i, (m, s) in enumerate(zip(self.means, self.covs))] )
+        _ = np.array( [self.priors[i] * multivariate_normal.pdf(x, mean=m, cov=np.diag(s), allow_singular=True)
+            for i, (m, s) in enumerate(zip(self.means, self.covs))] )
         norm = np.sum(_, axis=0)
         _ = np.divide(_, norm)
         return _.T
@@ -57,7 +58,8 @@ class NaivBayes(object):
 
 class GeneralBayes(NaivBayes):
     def predict(self, x):
-        _ = np.array( [self.priors[i] * multivariate_normal.pdf(x, mean=m, cov=c, allow_singular=True) for i, (m, c) in enumerate(zip(self.means, self.covs))] )
+        _ = np.array( [self.priors[i] * multivariate_normal.pdf(x, mean=m, cov=c, allow_singular=True)
+            for i, (m, c) in enumerate(zip(self.means, self.covs))] )
         norm = np.sum(_, axis=0)
         _ = np.divide(_, norm)
         return _.T
